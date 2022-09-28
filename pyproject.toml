@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "mscdisseration"
+version = "0.1.0"
+description = ""
+authors = ["Marcell O <omarcell@yahoo.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.28.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

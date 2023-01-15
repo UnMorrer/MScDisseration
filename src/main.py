@@ -33,7 +33,8 @@ def scrape_jooble():
 
         unpacked_jobs = [func.flatten_dict(job) for job in jobs]
 
-
+        # TODO: Save progress & allow to resume if scraping fails midway through
+        all_jobs += unpacked_jobs
 
     # Plan:
     # Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape

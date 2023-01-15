@@ -1,6 +1,38 @@
 # Scraping parameters
 request_timeout = 10
 request_delay = [0.25, 0.75]
+# API response keys retained -> fields with info I want to use
+data_types = {
+    "uid": int,
+    "url": str, # To scrape job description
+    "isUrlHiddenFromCrawler": bool,
+    "dateCaption": str, # When was entry created?
+    "salary": str, # TODO: Convert
+    "position": str, # job title
+    "isNew": bool, # Interesting stuff
+    "isPremium": bool,
+    "isEasyApply": bool,
+    "isRemoteJob": bool,
+    "isResumeRequired": bool,
+    "isAdvertLabel": bool,
+    "destination": int,
+    "companyIsVerified": bool,
+    "companyName": str,
+    "companyLink": str,
+    "companyIsContactsVerified": bool,
+    "companyDoesHaveHires": bool,
+    "companyDoesHaveManyHires": bool,
+    "companyIsActiveResponses": bool,
+    "locationName": str,
+    "locationIsShiftJob": bool,
+    "similarGroupdId": str, #?
+    "impressionId": str, #?
+    "hasFewApplies": bool,
+    "hasQuestions": bool,
+    "tags": list, #Interesting, seems motly empty
+    "highlightTags": list,
+    "isDteJob": bool # Daytime?
+}
 
 
 # Logging parameters

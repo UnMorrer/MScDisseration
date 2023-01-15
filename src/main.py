@@ -6,6 +6,7 @@ import logging
 import datetime
 import sys
 import os
+import time
 
 # Custom packages
 import common.functions as func
@@ -19,8 +20,20 @@ def scrape_jooble():
     """
 
     # Obtain total number of jobs on Jooble
-    job_count, _ = jle.get_jobs_from_backend(1)
-    jobs_per_page = 1
+    job_count, jobs = jle.get_jobs_from_backend(1)
+    jobs_per_page = len(jobs)
+    total_pages = np.ceil(job_count/jobs_per_page).astype(int)
+    logging.info(f"Found {job_count} jobs on {total_pages} pages.")
+
+    # Scrape pages
+    for page_num in range(1, total_pages+1):
+        # Wait random time before every request
+        time.sleep(rand.uniform(*cfg.request_delay))
+        _, jobs = jle.get_jobs_from_backend(page_num=page_num)
+
+        unpacked_jobs = [func.flatten_dict(job) for job in jobs]
+
+
 
     # Plan:
     # Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape

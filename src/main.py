@@ -3,6 +3,8 @@ def main():
     Function that executes scraping
     """
 
+    # Obtain total number of jobs on site
+
     # Plan:
 # Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape
 # Collect UIDs: content["jobs"][x]["uid"]

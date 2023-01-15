@@ -34,6 +34,3 @@ def get_jobs_from_backend(
     job_details = content["jobs"]
 
     return job_count, job_details
-
-
-a = 1

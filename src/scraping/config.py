@@ -1,7 +1,13 @@
+import random
+
+# Scraping parameters
+request_timeout = 10
+request_delay = [0.25, 0.75]
+
+
+# Request parameters
 jooble_get_url = "http://hu.jooble.org/%C3%A1ll%C3%A1s/K%C3%BClf%C3%B6ld"
-
 jooble_post_url = "http://hu.jooble.org/api/serp/jobs"
-
 jooble_post_headers = {
     "Accept": "/",
     "Connection": "keep-alive",
@@ -14,7 +20,6 @@ jooble_post_headers = {
     "Sec-Fect-Site": "same-origin",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 }
-
 jooble_post_cookies = {
     "SessionCookie.hu": "-7605529932450157550*2231947513189314018*638093143747064588"
 }

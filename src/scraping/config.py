@@ -1,8 +1,10 @@
-import random
-
 # Scraping parameters
 request_timeout = 10
 request_delay = [0.25, 0.75]
+
+
+# Logging parameters
+log_dir = "/logs"
 
 
 # Request parameters

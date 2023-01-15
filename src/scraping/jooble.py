@@ -1,14 +1,14 @@
 import requests
-import config
+import scraping.config as cfg
 import json
 
 
 def get_jobs_from_backend(
                           page_num,
-                          request_url=config.jooble_post_url,
-                          request_headers=config.jooble_post_headers,
-                          request_cookies=config.jooble_post_cookies,
-                          request_json=config.generate_post_request_json
+                          request_url=cfg.jooble_post_url,
+                          request_headers=cfg.jooble_post_headers,
+                          request_cookies=cfg.jooble_post_cookies,
+                          request_json=cfg.generate_post_request_json
                           ):
     """
     Function to get job information from backend API

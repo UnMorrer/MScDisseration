@@ -2,6 +2,10 @@
 import random as rand
 import numpy as np
 import pandas as pd
+import logging
+import datetime
+import sys
+import os
 
 # Custom packages
 import common.functions as func
@@ -16,6 +20,7 @@ def scrape_jooble():
 
     # Obtain total number of jobs on Jooble
     job_count, _ = jle.get_jobs_from_backend(1)
+    jobs_per_page = 1
 
     # Plan:
     # Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape
@@ -29,4 +34,17 @@ def scrape_jooble():
 # New advert - scrape individual site to get FULL job ad content
 
 if __name__ == "__main__":
+    # Logging config:
+    log_name = os.getcwd() + cfg.log_dir + r'/scrape_log_' + str(datetime.date.today()) + ".txt"
+    file_handler = logging.FileHandler(filename=log_name)
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    handlers = [file_handler, stdout_handler]
+
+    logging.basicConfig(
+        level=logging.INFO, 
+        format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+        handlers=handlers
+    )
+
+    # Custom functions
     scrape_jooble()

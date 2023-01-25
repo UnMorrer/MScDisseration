@@ -103,6 +103,6 @@ if __name__ == "__main__":
     # Scrape data
     scrape_jooble(1)
 
-    # Save results
+    # TODO: Save results to .csv
 
-    # Scrape new job details (full text)
+    # TODO: Scrape new job details (full text)

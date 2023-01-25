@@ -29,6 +29,10 @@ def scrape_jooble():
     for page_num in range(1, total_pages+1):
         # Wait random time before every request
         time.sleep(rand.uniform(*cfg.request_delay))
+
+        # Check if request successful
+        # Different from last request
+        # Didn't return error
         _, jobs = jle.get_jobs_from_backend(page_num=page_num)
 
         unpacked_jobs = [func.flatten_dict(job) for job in jobs]

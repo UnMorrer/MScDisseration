@@ -28,6 +28,9 @@ def get_jobs_from_backend(
         json=request_json(page_num)
     )
 
+    # Raise error for HTTP code other than 200
+    response.raise_for_status()
+
     content = json.loads(response.text)
 
     job_count = content["count"]

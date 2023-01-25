@@ -1,3 +1,14 @@
+# Plan:
+# Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape
+# Collect UIDs: content["jobs"][x]["uid"]
+# Scrape URLs for new items -> get full description
+# Save all data to 3 databases (csv)
+# 1. Job descriptions - most of content["jobs"][x]
+# 2. Company database - content["jobs"][x]["company"] -> Collect websites as well?
+# 3. Location - mostly country - is this necessary?
+
+# New advert - scrape individual site to get FULL job ad content
+
 # Common libraries
 import random as rand
 import numpy as np
@@ -15,9 +26,13 @@ import scraping.config as cfg
 import scraping.jooble as jle
 import export.save_results as save
 
-def scrape_jooble():
+def scrape_jooble(start_page=1):
     """
     Function that orchestrates scraping for Jooble.hu
+
+    Inputs:
+    start_page - int: First page to request for scraping.
+    Allows resuming scraping after failure
     """
 
     # Obtain total number of jobs on Jooble
@@ -26,34 +41,51 @@ def scrape_jooble():
     total_pages = np.ceil(job_count/jobs_per_page).astype(int)
     logging.info(f"Found {job_count} jobs on {total_pages} pages.")
 
+    # Create result output
+    dtypes = np.dtype(
+        [(k, v) for k, v in cfg.data_types.items()]
+    )
+    all_jobs = pd.DataFrame(np.empty(0, dtype=dtypes))
+
     # Scrape pages
-    for page_num in range(1, total_pages+1):
+    last_uids = tuple()# tuple to keep track of UIDs encountered
+    for page_num in range(start_page, total_pages+1):
         # Wait random time before every request
         time.sleep(rand.uniform(*cfg.request_delay))
+        current_uids = []
 
         # Check if request successful
         try:
             _, jobs = jle.get_jobs_from_backend(page_num=page_num)
         except requests.HTTPError:
-            # Save progress into a file
-            pass
-            #TODO: save_output()
+            # Handle unsuccessful request
+            return (all_jobs, #data
+                    page_num) # last page retrieved
 
-        unpacked_jobs = [func.flatten_dict(job) for job in jobs]
+        # Keep only data for relevant keys (columns)
+        for job in jobs:
+            flattened_job = func.flatten_dict(job)
+            filtered_job = pd.Series(flattened_job)[cfg.data_types.keys()]
 
-        # TODO: Save progress & allow to resume if scraping fails midway through
-        all_jobs += unpacked_jobs
+            # Check if results are different
+            if filtered_job["uid"] in last_uids:
+                logging.warning(
+                    f"Same UID encountered twice during scraping: {filtered_job['uid']}")
+            
+            # Add to track current uid
+            current_uids.append(filtered_job["uid"])
 
-    # Plan:
-    # Send request to get ALL jobs - DELAY of 1 sec -> 5 min scrape
-    # Collect UIDs: content["jobs"][x]["uid"]
-    # Scrape URLs for new items -> get full description
-    # Save all data to 3 databases (csv)
-    # 1. Job descriptions - most of content["jobs"][x]
-    # 2. Company database - content["jobs"][x]["company"] -> Collect websites as well?
-    # 3. Location - mostly country - is this necessary?
-
-# New advert - scrape individual site to get FULL job ad content
+            # Add new row to results
+            all_jobs = pd.concat([all_jobs, filtered_job],
+                                 ignore_index=True)
+        
+        # Reset UIDs after extraction
+        last_uids = tuple(current_uids)
+    
+    # Return data after successful scrape
+    logging.info(f"Finished scraping. Number of jobs scraped: ")
+    return (all_jobs, # data
+            0) # 0 not possible unless success since index starts with 1
 
 if __name__ == "__main__":
     # Logging config:
@@ -68,5 +100,9 @@ if __name__ == "__main__":
         handlers=handlers
     )
 
-    # Custom functions
-    scrape_jooble()
+    # Scrape data
+    scrape_jooble(1)
+
+    # Save results
+
+    # Scrape new job details (full text)

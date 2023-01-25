@@ -8,6 +8,7 @@ data_types = {
     "isUrlHiddenFromCrawler": bool,
     "dateCaption": str, # When was entry created?
     "salary": str, # TODO: Convert
+    "content": str, # Advert text (first n characters)
     "position": str, # job title
     "isNew": bool, # Interesting stuff
     "isPremium": bool,
@@ -23,13 +24,13 @@ data_types = {
     "companyDoesHaveHires": bool,
     "companyDoesHaveManyHires": bool,
     "companyIsActiveResponses": bool,
-    "locationName": str,
+    "impressionId": str, # ?
+    "similarGroupId": str, # ?
+    "locationName": str, # Country
     "locationIsShiftJob": bool,
-    "similarGroupdId": str, #?
-    "impressionId": str, #?
     "hasFewApplies": bool,
     "hasQuestions": bool,
-    "tags": list, #Interesting, seems motly empty
+    "tags": list, #Interesting, seems mostly empty
     "highlightTags": list,
     "isDteJob": bool # Daytime?
 }

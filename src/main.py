@@ -7,6 +7,7 @@ import datetime
 import sys
 import os
 import time
+import requests
 
 # Custom packages
 import common.functions as func
@@ -31,9 +32,12 @@ def scrape_jooble():
         time.sleep(rand.uniform(*cfg.request_delay))
 
         # Check if request successful
-        # Different from last request
-        # Didn't return error
-        _, jobs = jle.get_jobs_from_backend(page_num=page_num)
+        try:
+            _, jobs = jle.get_jobs_from_backend(page_num=page_num)
+        except requests.HTTPError:
+            # Save progress into a file
+            pass
+            #TODO: save_output()
 
         unpacked_jobs = [func.flatten_dict(job) for job in jobs]
 

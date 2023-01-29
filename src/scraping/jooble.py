@@ -1,6 +1,7 @@
 import requests
 import common.config as cfg
 import json
+import bs4
 
 
 def generate_post_request_json(page_num):
@@ -84,5 +85,15 @@ def get_full_job_description(
 
     # Check request is OK
     response.raise_for_status()
-    r = response.text
+
+    # Begin parsing
+    soup = bs4.BeautifulSoup(response.text, 'html.parser')
+    script_block = soup.find(
+        cfg.full_content_selector_type,
+        cfg.full_content_selector_params
+    )
+
+    # Strip details from contents
+    full_details = script_block.contents[0]
+
     return None

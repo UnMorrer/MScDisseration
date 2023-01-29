@@ -74,6 +74,10 @@ jooble_get_headers = {
     "Sec-Fetch-Site": "none",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 }
+full_content_selector_type = "script"
+full_content_selector_params = {
+    "type": "application/ld+json",
+}
 
 # Saving parameters
 timestring = time.strftime("%Y%m%d")

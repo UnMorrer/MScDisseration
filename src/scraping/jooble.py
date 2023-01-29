@@ -78,5 +78,7 @@ def get_full_job_description(
 
     """
 
-    response = requests.get(request_url)
+    response = requests.get(
+        request_url,
+        headers=request_headers)
     return None

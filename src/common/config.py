@@ -64,14 +64,15 @@ jooble_post_cookies = {
 # GET request for full details
 jooble_get_headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-GB,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
     "Connection": "keep-alive",
-    "content-type": "application/json",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
     "Referer": jooble_get_url,
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fect-Site": "same-origin",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 }
 

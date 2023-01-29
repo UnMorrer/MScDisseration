@@ -61,3 +61,10 @@ def get_jobs_from_backend(
     job_details = content["jobs"]
 
     return job_count, job_details
+
+
+def get_full_job_description(
+    job_url,
+    html_tag):
+    pass
+# TODO: Scrape full job description

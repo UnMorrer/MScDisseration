@@ -65,3 +65,4 @@ jooble_post_cookies = {
 timestring = time.strftime("%Y%m%d")
 save_dir = "/data"
 save_filename = f"JoobleData_{timestring}"
+unique_id_column_name = "uid"

@@ -1,4 +1,6 @@
 from collections.abc import MutableMapping
+import numpy as np
+import pandas as pd
 
 def flatten_dict(
                 d: MutableMapping,
@@ -30,3 +32,26 @@ def flatten_dict(
         else:
             items.append((new_key, v))
     return dict(items)
+
+
+def create_dataframe_with_dtypes(dtypes):
+    """
+    Function that creates an empty dataframe with 
+    column names & data types for columns taken
+    from dtypes_dict.
+
+    Input:
+    dtypes - dict: Dictionary with column names
+    as keys and column data types as values.
+
+    Returns:
+    df - DataFrame: An empty DataFrame with 
+    specification outlined above.
+    """
+
+    dtypes = np.dtype(
+        [(k, v) for k, v in dtypes.items()]
+    )
+    df = pd.DataFrame(np.empty(0, dtype=dtypes))
+
+    return df

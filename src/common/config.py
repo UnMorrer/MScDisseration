@@ -34,7 +34,7 @@ data_types = {
     "hasQuestions": bool,
     "tags": list, #Interesting, seems mostly empty
     "highlightTags": list,
-    "isDteJob": bool # Daytime?
+    "isDteJob": bool, # Daytime?
 }
 
 
@@ -78,6 +78,26 @@ full_content_selector_type = "script"
 full_content_selector_params = {
     "type": "application/ld+json",
 }
+
+full_content_renaming = {
+    "jobBaseSalaryValueUnitText": "jobBaseSalaryTimeUnit",
+    "jobIdentifierValue": "uid",
+}
+
+full_content_data_types = {
+    "uid": str,
+    "jobTitle": str, 
+    "jobDescription": str, # sanity check: must equal position
+    "jobDatePosted": str,
+    "jobHiringOrganizationName": str,
+    "jobHiringOrganizationSameAs": str, #Seems like web address
+    "jobBaseSalaryCurrency": str,
+    "jobBaseSalaryValueMinValue": float,
+    "jobBaseSalaryValueMaxValue": float,
+    "jobBaseSalaryTimeUnit": str,
+}
+
+job_full_details_column = "jobDescription" # TODO: Used for cleaning later
 
 # Saving parameters
 timestring = time.strftime("%Y%m%d")

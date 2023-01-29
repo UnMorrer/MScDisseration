@@ -10,86 +10,18 @@
 # New advert - scrape individual site to get FULL job ad content
 
 # Common libraries
-import random as rand
-import numpy as np
-import pandas as pd
 import logging
 import datetime
 import sys
 import os
-import time
-import requests
 
 # Custom packages
-import common.functions as func
 import common.config as cfg
 import scraping.jooble as jle
 import export.save_results as save
 
 # TODO: Create click parameter
 start_page = 1
-
-def scrape_jooble(start_page=1):
-    """
-    Function that orchestrates scraping for Jooble.hu
-
-    Inputs:
-    start_page - int: First page to request for scraping.
-    Allows resuming scraping after failure
-    """
-
-    # Obtain total number of jobs on Jooble
-    job_count, jobs = jle.get_jobs_from_backend(1)
-    jobs_per_page = len(jobs)
-    total_pages = np.ceil(job_count/jobs_per_page).astype(int)
-    logging.info(f"Found {job_count} jobs on {total_pages} pages.")
-
-    # Create result output
-    dtypes = np.dtype(
-        [(k, v) for k, v in cfg.data_types.items()]
-    )
-    all_jobs = pd.DataFrame(np.empty(0, dtype=dtypes))
-
-    # Scrape pages
-    last_uids = tuple()# tuple to keep track of UIDs encountered
-    for page_num in range(start_page, total_pages+1):
-        # Wait random time before every request
-        time.sleep(rand.uniform(*cfg.request_delay))
-        current_uids = []
-
-        # Check if request successful
-        try:
-            _, jobs = jle.get_jobs_from_backend(page_num=page_num)
-        except requests.HTTPError as e:
-            # Handle unsuccessful request
-            logging.error(f"HTTP {e.response.status_code} error encountered during scraping")
-            logging.info(f"Scraping aborted on page {page_num}")
-            return (all_jobs, #data
-                    page_num) # last page retrieved
-        # Keep only data for relevant keys (columns)
-        for job in jobs:
-            flattened_job = func.flatten_dict(job)
-            filtered_job = pd.Series(flattened_job)[cfg.data_types.keys()]
-
-            # Check if results are different
-            if filtered_job["uid"] in last_uids:
-                logging.warning(
-                    f"Same UID encountered twice during scraping: {filtered_job['uid']}")
-            
-            # Add to track current uid
-            current_uids.append(filtered_job["uid"])
-
-            # Add new row to results
-            all_jobs = pd.concat([all_jobs, filtered_job],
-                                 ignore_index=True)
-        
-        # Reset UIDs after extraction
-        last_uids = tuple(current_uids)
-    
-    # Return data after successful scrape
-    logging.info(f"Finished scraping. Number of jobs scraped: ")
-    return (all_jobs, # data
-            0) # 0 not possible unless success since index starts with 1
 
 if __name__ == "__main__":
     jle.get_full_job_description(request_url="https://hu.jooble.org/jdp/7938131374549632697/Betan%C3%ADtott-k%C3%BClf%C3%B6ldi-munka-N%C3%A9metorsz%C3%A1g?ckey=NONE&rgn=4357&pos=1&elckey=774426437728287612&p=1&sid=6218519767749110609&jobAge=306&brelb=100&bscr=135214.6625088799&scr=135214.6625088799&searchTestGroup=1_2_1&iid=3556367484299631077")
@@ -106,7 +38,7 @@ if __name__ == "__main__":
     )
 
     # Scrape data
-    job_df, last_page = scrape_jooble(start_page)
+    job_df, last_page = jle.scrape_jooble_backend(start_page)
 
     #Save results to .csv
     append_save = False if start_page == 1 else True

@@ -26,6 +26,9 @@ import common.config as cfg
 import scraping.jooble as jle
 import export.save_results as save
 
+# TODO: Create click parameter
+start_page = 1
+
 def scrape_jooble(start_page=1):
     """
     Function that orchestrates scraping for Jooble.hu
@@ -102,8 +105,10 @@ if __name__ == "__main__":
     )
 
     # Scrape data
-    job_df, last_page = scrape_jooble(1)
+    job_df, last_page = scrape_jooble(start_page)
 
-    # TODO: Save results to .csv
+    #Save results to .csv
+    append_save = False if start_page == 1 else True
+    save.job_details(job_df)
 
     # TODO: Scrape new job details (full text)

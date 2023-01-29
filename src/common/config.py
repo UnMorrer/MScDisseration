@@ -63,5 +63,5 @@ jooble_post_cookies = {
 
 # Saving parameters
 timestring = time.strftime("%Y%m%d")
-save_folder = "/data"
-save_file_name = f"JoobleData_{timestring}.csv"
+save_dir = "/data"
+save_filename = f"JoobleData_{timestring}"

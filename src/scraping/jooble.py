@@ -1,5 +1,5 @@
 import requests
-import scraping.config as cfg
+import common.config as cfg
 import json
 
 

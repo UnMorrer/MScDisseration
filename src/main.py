@@ -22,7 +22,7 @@ import requests
 
 # Custom packages
 import common.functions as func
-import scraping.config as cfg
+import common.config as cfg
 import scraping.jooble as jle
 import export.save_results as save
 
@@ -57,11 +57,12 @@ def scrape_jooble(start_page=1):
         # Check if request successful
         try:
             _, jobs = jle.get_jobs_from_backend(page_num=page_num)
-        except requests.HTTPError:
+        except requests.HTTPError as e:
             # Handle unsuccessful request
+            logging.error(f"HTTP {e.response.status_code} error encountered during scraping")
+            logging.info(f"Scraping aborted on page {page_num}")
             return (all_jobs, #data
                     page_num) # last page retrieved
-
         # Keep only data for relevant keys (columns)
         for job in jobs:
             flattened_job = func.flatten_dict(job)
@@ -101,7 +102,7 @@ if __name__ == "__main__":
     )
 
     # Scrape data
-    scrape_jooble(1)
+    job_df, last_page = scrape_jooble(1)
 
     # TODO: Save results to .csv
 

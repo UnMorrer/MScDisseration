@@ -92,6 +92,8 @@ def scrape_jooble(start_page=1):
             0) # 0 not possible unless success since index starts with 1
 
 if __name__ == "__main__":
+    jle.get_full_job_description()
+
     # Logging config:
     log_name = os.getcwd() + cfg.log_dir + r'/scrape_log_' + str(datetime.date.today()) + ".txt"
     file_handler = logging.FileHandler(filename=log_name)
@@ -109,6 +111,6 @@ if __name__ == "__main__":
 
     #Save results to .csv
     append_save = False if start_page == 1 else True
-    save.job_details(job_df)
+    save.job_details(job_df, append=append_save)
 
     # TODO: Scrape new job details (full text)

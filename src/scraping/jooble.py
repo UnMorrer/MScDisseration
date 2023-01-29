@@ -64,7 +64,17 @@ def get_jobs_from_backend(
 
 
 def get_full_job_description(
-    job_url,
-    html_tag):
-    pass
-# TODO: Scrape full job description
+    job_url="https://hu.jooble.org/jdp/7938131374549632697/",
+    html_tag=None):
+    
+    """
+    Function to get full job description from jooble.hu.
+
+    Inputs:
+
+    Returns:
+
+    """
+
+    response = requests.get(job_url)
+    return None

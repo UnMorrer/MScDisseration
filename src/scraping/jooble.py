@@ -81,4 +81,8 @@ def get_full_job_description(
     response = requests.get(
         request_url,
         headers=request_headers)
+
+    # Check request is OK
+    response.raise_for_status()
+    r = response.text
     return None

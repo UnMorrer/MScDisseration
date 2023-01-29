@@ -3,12 +3,36 @@ import common.config as cfg
 import json
 
 
+def generate_post_request_json(page_num):
+    """
+    Function to generate dictionary to send to
+    Jooble in a HTTPS POST request.
+    
+    Inputs:
+    page_num - int: Page number for request
+    
+    Returns:
+    request - dict: Request headers"""
+
+    jooble_post_json = {
+        "coords": None,
+        "isCityregion": False,
+        "isRemoteSerp": False,
+        "jobTypes": [],
+        "page": page_num,
+        "region": "Külföld",
+        "regionId": 4357,
+        "search": "",
+    }
+    return jooble_post_json
+
+
 def get_jobs_from_backend(
                           page_num,
                           request_url=cfg.jooble_post_url,
                           request_headers=cfg.jooble_post_headers,
                           request_cookies=cfg.jooble_post_cookies,
-                          request_json=cfg.generate_post_request_json
+                          request_json=generate_post_request_json
                           ):
     """
     Function to get job information from backend API

@@ -1,3 +1,5 @@
+import time
+
 # Scraping parameters
 request_timeout = 10
 request_delay = [0.25, 0.75]
@@ -59,26 +61,7 @@ jooble_post_cookies = {
     "SessionCookie.hu": "-7605529932450157550*2231947513189314018*638093143747064588"
 }
 
-
-def generate_post_request_json(page_num):
-    """
-    Function to generate dictionary to send to
-    Jooble in a HTTPS POST request.
-    
-    Inputs:
-    page_num - int: Page number for request
-    
-    Returns:
-    request - dict: Request headers"""
-
-    jooble_post_json = {
-        "coords": None,
-        "isCityregion": False,
-        "isRemoteSerp": False,
-        "jobTypes": [],
-        "page": page_num,
-        "region": "Külföld",
-        "regionId": 4357,
-        "search": "",
-    }
-    return jooble_post_json
+# Saving parameters
+timestring = time.strftime("%Y%m%d")
+save_folder = "/data"
+save_file_name = f"JoobleData_{timestring}.csv"

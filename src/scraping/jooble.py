@@ -64,7 +64,9 @@ def get_jobs_from_backend(
 
 
 def get_full_job_description(
-    job_url="https://hu.jooble.org/jdp/7938131374549632697/",
+    request_url=cfg.jooble_post_url,
+    request_headers=cfg.jooble_get_headers,
+    request_cookies=cfg.jooble_post_cookies,
     html_tag=None):
     
     """
@@ -76,5 +78,5 @@ def get_full_job_description(
 
     """
 
-    response = requests.get(job_url)
+    response = requests.get(request_url)
     return None

@@ -61,6 +61,20 @@ jooble_post_cookies = {
     "SessionCookie.hu": "-7605529932450157550*2231947513189314018*638093143747064588"
 }
 
+# GET request for full details
+jooble_get_headers = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Connection": "keep-alive",
+    "content-type": "application/json",
+    "Host": "hu.jooble.org",
+    "Origin": "https://hu.jooble.org",
+    "Referer": jooble_get_url,
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fect-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
+}
+
 # Saving parameters
 timestring = time.strftime("%Y%m%d")
 save_dir = "/data"

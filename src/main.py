@@ -18,7 +18,7 @@ import os
 # Custom packages
 import common.config as cfg
 import scraping.jooble as jle
-import export.save_results as save
+import file.save_results as save
 
 # TODO: Create click parameter
 start_page = 1
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     append_save = False if start_page == 1 else True
     save.job_details(job_df, append=append_save)
 
-    # Use URL and job ID from job_df
+    # Find new job IDs
 
     # TODO: Scrape full job advert
     # Text -> {job_id}.txt

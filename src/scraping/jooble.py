@@ -200,3 +200,7 @@ def get_full_job_description(
     job_details = pd.Series(details_flat_dict)[content_data_names]
 
     return job_details
+
+
+def get_all_full_job_descriptions():
+    pass

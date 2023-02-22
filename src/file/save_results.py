@@ -61,5 +61,5 @@ def job_details(
 
 
 # Append full job text to saved data
-def job_full_description():
+def save_job_full_description():
     pass

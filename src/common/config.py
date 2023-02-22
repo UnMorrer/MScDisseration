@@ -98,6 +98,7 @@ full_content_data_types = {
 }
 
 job_full_details_column = "jobDescription" # TODO: Used for cleaning later
+cleaned_job_full_details_column = "jobDescriptionClean"
 
 # Saving parameters
 timestring = time.strftime("%Y%m%d")

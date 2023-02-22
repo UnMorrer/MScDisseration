@@ -206,6 +206,32 @@ def get_all_full_job_descriptions(
         new_df,
         previous_ids,
         uid_colname=cfg.unique_id_column_name,
-        url_colname=cfg.link_colname
-):
+        url_colname=cfg.link_colname):
+    """
+    Function to get full job description from jooble.hu
+    for ALL jobs. Handles orchestration as well.
+
+    Inputs:
+    new_df - DataFrame: DataFrame containing job information
+    collected from (Jooble) website
+    previous_ids - list/pandas Series: All encountered previous
+    job IDs
+    uid_colname - str: Column name (in the new_df DataFrame)
+    that selects the unique ID column.
+    url_colname - str: Column name (in the new_df DataFrame)
+    that select the column containing the URLs to scrape
+
+    Returns:
+    full_job_details - pd.DataFrame: A Pandas DataFrame 
+    with individual job details, including FULL job
+    description
+    """
+
+    # Select new jobs (UIDs not in previous_ids)
+
+    # Scrape their full details
+
+    # Collect results into a DataFrame
+
+    # Returns results
     pass

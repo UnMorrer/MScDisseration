@@ -42,4 +42,7 @@ def load_previous_data(
 
         df = pd.concat([df, new_df],ignore_index=True)
 
+    # Keep only unique rows
+    df = df.drop_duplicates()
+
     return df

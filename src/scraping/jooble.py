@@ -202,5 +202,10 @@ def get_full_job_description(
     return job_details
 
 
-def get_all_full_job_descriptions():
+def get_all_full_job_descriptions(
+        new_df,
+        previous_ids,
+        uid_colname=cfg.unique_id_column_name,
+        url_colname=cfg.link_colname
+):
     pass

@@ -105,3 +105,9 @@ timestring = time.strftime("%Y%m%d")
 save_dir = "/data"
 save_filename = f"JoobleData_{timestring}"
 unique_id_column_name = "uid"
+
+# Load parameters
+load_match_regex = r"^JoobleData_.*\.csv$"
+
+# Finding new jobs that haven't been scraped yet
+link_colname = "url"

@@ -11,7 +11,7 @@ import random as rand
 
 # Custom packages
 import common.functions as func
-
+import common.scraping as scrape_utils
 
 def generate_post_request_json(page_num):
     """
@@ -181,7 +181,20 @@ def get_full_job_description(
 
     # Rename some keys
     for old_key, new_key in content_rename_keys.items():
-        details_flat_dict[new_key] = details_flat_dict.pop(old_key)
+        try:
+            details_flat_dict[new_key] = details_flat_dict.pop(old_key)
+        except KeyError: # Catch fields not existing in job description
+            details_flat_dict[new_key] = None
+    
+    # Ensure all values are available - impute missing as None
+    for key in content_data_names:
+        if key not in details_flat_dict.keys():
+            details_flat_dict[key] = None
+
+    # Unescape HTML encoding for job description
+    job_description = details_flat_dict[cfg.job_full_details_column]
+    cleaned_job_description = scrape_utils.html_to_text(job_description)
+    details_flat_dict[cfg.cleaned_job_full_details_column] = cleaned_job_description
 
     # Create pandas Series to return
     job_details = pd.Series(details_flat_dict)[content_data_names]

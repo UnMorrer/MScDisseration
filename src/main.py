@@ -24,7 +24,7 @@ import export.save_results as save
 start_page = 1
 
 if __name__ == "__main__":
-    jle.get_full_job_description(request_url="https://hu.jooble.org/jdp/7938131374549632697/Betan%C3%ADtott-k%C3%BClf%C3%B6ldi-munka-N%C3%A9metorsz%C3%A1g?ckey=NONE&rgn=4357&pos=1&elckey=774426437728287612&p=1&sid=6218519767749110609&jobAge=306&brelb=100&bscr=135214.6625088799&scr=135214.6625088799&searchTestGroup=1_2_1&iid=3556367484299631077")
+    a = jle.get_full_job_description(request_url=r"https://hu.jooble.org/desc/141750743977837784?ckey=betan%c3%adtott+k%c3%bclf%c3%b6ldi+munka&rgn=4384&pos=1&elckey=-2011316934996023714&p=1&sid=4738959385858235377&jobAge=302&brelb=100&bscr=27.833&scr=27.833&searchTestGroup=1_2_1&iid=-8955806754543657294")
     # Logging config:
     log_name = os.getcwd() + cfg.log_dir + r'/scrape_log_' + str(datetime.date.today()) + ".txt"
     file_handler = logging.FileHandler(filename=log_name)
@@ -44,4 +44,8 @@ if __name__ == "__main__":
     append_save = False if start_page == 1 else True
     save.job_details(job_df, append=append_save)
 
-    # TODO: Scrape new job details (full text)
+    # Use URL and job ID from job_df
+
+    # TODO: Scrape full job advert
+    # Text -> {job_id}.txt
+    # Look for files/IDs not already in folder

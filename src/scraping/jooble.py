@@ -206,7 +206,8 @@ def get_all_full_job_descriptions(
         new_df,
         previous_ids,
         uid_colname=cfg.unique_id_column_name,
-        url_colname=cfg.link_colname):
+        url_colname=cfg.link_colname,
+        content_data_types=cfg.full_content_data_types):
     """
     Function to get full job description from jooble.hu
     for ALL jobs. Handles orchestration as well.
@@ -225,13 +226,31 @@ def get_all_full_job_descriptions(
     full_job_details - pd.DataFrame: A Pandas DataFrame 
     with individual job details, including FULL job
     description
+    unscraped_urls - list: List of unscraped URLs
     """
 
+    uids = new_df[uid_colname]
     # Select new jobs (UIDs not in previous_ids)
+    urls = new_df[~uids.isin(previous_ids)][url_colname]
+    unscraped_urls = urls.copy()
 
+    # Set up DataFrame for data
+    full_job_details = func.create_dataframe_with_dtypes(content_data_types)
+        
     # Scrape their full details
+    for url in urls:
+        try:
+            job_details = get_full_job_description(url)
+        except requests.HTTPError as e:
+            logging.error(f"HTTP {e.response.status_code} error encountered during detailed scraping")
+            logging.info(f"Scraping aborted for page {url}")
+            return unscraped_urls, full_job_details
+        
+        # Remove URL from unscraped list
+        unscraped_urls.remove(url)
 
-    # Collect results into a DataFrame
+        # Collect results into a DataFrame
+        full_job_details = pd.concat(full_job_details, job_details)
 
-    # Returns results
-    pass
+    # Return results after succesful run
+    return [], full_job_details

@@ -104,10 +104,11 @@ cleaned_job_full_details_column = "jobDescriptionClean"
 timestring = time.strftime("%Y%m%d")
 save_dir = "/data"
 save_filename = f"JoobleData_{timestring}"
+full_desc_filename = f"JoobdleData_FullDesc_{timestring}"
 unique_id_column_name = "uid"
 
 # Load parameters
-load_match_regex = r"^JoobleData_.*\.csv$"
+load_match_regex = r"^JoobleData_FullDesc_.*\.csv$"
 
 # Finding new jobs that haven't been scraped yet
 link_colname = "url"

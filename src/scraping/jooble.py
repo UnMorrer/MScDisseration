@@ -203,11 +203,12 @@ def get_full_job_description(
 
 
 def get_all_full_job_descriptions(
-        new_df,
-        previous_ids,
+        new_df=None,
+        previous_ids=None,
         uid_colname=cfg.unique_id_column_name,
         url_colname=cfg.link_colname,
-        content_data_types=cfg.full_content_data_types):
+        content_data_types=cfg.full_content_data_types,
+        url_list=None):
     """
     Function to get full job description from jooble.hu
     for ALL jobs. Handles orchestration as well.
@@ -221,6 +222,8 @@ def get_all_full_job_descriptions(
     that selects the unique ID column.
     url_colname - str: Column name (in the new_df DataFrame)
     that select the column containing the URLs to scrape
+    url_list - list(str): A list of specific URLs to scrape.
+    Used when scraping full details encountered an error.
 
     Returns:
     full_job_details - pd.DataFrame: A Pandas DataFrame 
@@ -229,16 +232,23 @@ def get_all_full_job_descriptions(
     unscraped_urls - list: List of unscraped URLs
     """
 
-    uids = new_df[uid_colname]
-    # Select new jobs (UIDs not in previous_ids)
-    urls = new_df[~uids.isin(previous_ids)][url_colname]
-    unscraped_urls = urls.copy()
+    # Handle recovery from scraping error
+    if url_list is not None:
+        uids = new_df[uid_colname]
+        # Select new jobs (UIDs not in previous_ids)
+        urls = new_df[~uids.isin(previous_ids)][url_colname]
+        unscraped_urls = urls.copy()
+    else:
+        urls = url_list
+        unscraped_urls = url_list.copy()
 
     # Set up DataFrame for data
     full_job_details = func.create_dataframe_with_dtypes(content_data_types)
         
     # Scrape their full details
     for url in urls:
+        # Wait random time before every request
+        time.sleep(rand.uniform(*cfg.request_delay))
         try:
             job_details = get_full_job_description(url)
         except requests.HTTPError as e:

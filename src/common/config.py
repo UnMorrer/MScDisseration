@@ -2,7 +2,7 @@ import time
 
 # Scraping parameters
 request_timeout = 10
-request_delay = [0.25, 0.75]
+request_delay = [0.5, 2]
 # API response keys retained -> fields with info I want to use
 data_types = {
     "uid": int,

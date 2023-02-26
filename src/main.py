@@ -23,7 +23,8 @@ import file.load_results as load
 
 # TODO: Create click parameter
 start_page = 1
-scrape_details = False # TODO: Skip to scraping details when that part fails
+# File path of unscraped URLs. Used to recover from detailed scraping error.
+url_file_path = ""
 
 if __name__ == "__main__":
     # Logging config:
@@ -38,24 +39,36 @@ if __name__ == "__main__":
         handlers=handlers
     )
 
-    # Scrape data
-    job_df, last_page = jle.scrape_jooble_backend(start_page)
+    if url_file_path == "":
+        # Scrape data
+        job_df, last_page = jle.scrape_jooble_backend(start_page)
 
-    #Save results to .csv
-    append_save = False if start_page == 1 else True
-    save.job_details(job_df, append=append_save)
+        #Save results to .csv
+        append_save = False if start_page == 1 else True
+        save.job_details(job_df, append=append_save)
 
-    # Load previous job data
-    previous_ids = load.load_previous_data(
-        cfg.save_dir,
-        filename_regex=cfg.load_match_regex
-    )[cfg.unique_id_column_name]
+        # Load previous job data
+        previous_ids = load.load_previous_data(
+            cfg.save_dir,
+            filename_regex=cfg.load_match_regex
+        )[cfg.unique_id_column_name]
 
-    # Scrape full details for new jobs
-    unscraped, full_details_df = jle.get_all_full_job_descriptions(
-        job_df,
-        previous_ids=previous_ids
-        )
+        # Scrape full details for new jobs
+        unscraped, full_details_df = jle.get_all_full_job_descriptions(
+            job_df,
+            previous_ids=previous_ids
+            )
+    
+    else:
+         # Jump straight to detailed scraping upon failure
+
+        # Load URLs into list:
+        with open(url_file_path, "r") as file:
+             urls = [line.rstrip() for line in file]   
+
+        unscraped, full_details_df = jle.get_all_full_job_descriptions(
+            url_list=urls
+            )
     
     save.job_details(
         full_details_df,

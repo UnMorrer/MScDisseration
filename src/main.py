@@ -14,6 +14,7 @@ import logging
 import datetime
 import sys
 import os
+import click
 
 # Custom packages
 import common.config as cfg
@@ -21,12 +22,11 @@ import scraping.jooble as jle
 import file.save_results as save
 import file.load_results as load
 
-# TODO: Create click parameter
-start_page = 1
-# File path of unscraped URLs. Used to recover from detailed scraping error.
-url_file_path = ""
 
-if __name__ == "__main__":
+@click.command()
+@click.option("-sp", "--start-page", default=1, help="Start page of backend scraping")
+@click.option("-ufp", "--url-file-path", default="", help="File path for detailed scraping URLs")
+def main(start_page, url_file_path):
     # Logging config:
     log_name = os.getcwd() + cfg.log_dir + r'/scrape_log_' + str(datetime.date.today()) + ".txt"
     file_handler = logging.FileHandler(filename=log_name)
@@ -42,6 +42,7 @@ if __name__ == "__main__":
     if url_file_path == "":
         # Scrape data
         job_df, last_page = jle.scrape_jooble_backend(start_page)
+        logging.info(f"Found {last_page} pages for jobs!")
 
         #Save results to .csv
         append_save = False if start_page == 1 else True
@@ -82,3 +83,6 @@ if __name__ == "__main__":
                 for row in unscraped:
                     s = ",\n".join(map(str, row))
                     file.write(s+'\n')
+
+if __name__ == "__main__":
+    main()

@@ -279,6 +279,10 @@ def get_all_full_job_descriptions(
         
     # Scrape their full details
     for url in urls:
+        # Skip if it points to external site - TODO
+        if cfg.external_site_url in url:
+            continue
+
         # Wait random time before every request
         time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
         try:

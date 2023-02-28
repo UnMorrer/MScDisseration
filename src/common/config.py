@@ -121,7 +121,8 @@ full_desc_filename = f"JoobdleData_FullDesc_{timestring}"
 unique_id_column_name = "uid"
 
 # Load parameters
-load_match_regex = r"^JoobleData_FullDesc_.*\.csv$"
+load_match_regex = fr"^JoobleData_FullDesc_{timestring}.csv$"
+external_site_url = "https://hu.jooble.org/away/"
 
 # Finding new jobs that haven't been scraped yet
 link_colname = "url"

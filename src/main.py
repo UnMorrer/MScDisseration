@@ -58,7 +58,7 @@ def main(start_page, url_file_path):
              previous_ids = []
 
         else:
-             previous_ids = previous_ids[cfg.unique_id_column_name]
+             previous_ids = previous_ids[cfg.unique_id_column_name].tolist()
 
         # Scrape full details for new jobs
         unscraped, full_details_df = jle.get_all_full_job_descriptions(

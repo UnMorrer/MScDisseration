@@ -266,7 +266,7 @@ def get_all_full_job_descriptions(
     """
 
     # Handle recovery from scraping error
-    if url_list is not None:
+    if url_list is None:
         uids = new_df[uid_colname]
         # Select new jobs (UIDs not in previous_ids)
         urls = new_df[~uids.isin(previous_ids)][url_colname]

@@ -12,7 +12,7 @@ def job_details(
     job_df,
     append=False,
     filename=(os.getcwd() + cfg.save_dir + "/" + cfg.save_filename + ".csv"),
-    kwargs=None):
+    **kwargs):
 
     """
     Function to save initial API scraping results to disk

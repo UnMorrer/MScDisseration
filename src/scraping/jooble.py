@@ -124,6 +124,7 @@ def scrape_jooble_backend(
         # Stop scraping after 5 unsuccessful requests
         if len(jobs) == 0:
             empty_pages += 1
+            logging.warning(f"Found no results on page {page_num}")
             if empty_pages >= max_empty_pages:
                 logging.warning(f"{max_empty_pages} found for scraping!"
                     + f" Halted scraping on page {page_num}/{total_pages}")

@@ -24,7 +24,7 @@ import file.load_results as load
 
 
 @click.command()
-@click.option("-sp", "--start-page", default=392, help="Start page of backend scraping")
+@click.option("-sp", "--start-page", default=1, help="Start page of backend scraping")
 @click.option("-ufp", "--url-file-path", default="", help="File path for detailed scraping URLs")
 def main(start_page, url_file_path):
     # Logging config:

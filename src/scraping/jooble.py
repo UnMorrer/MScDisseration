@@ -132,6 +132,7 @@ def scrape_jooble_backend(
                 return all_jobs, page_num
 
         # Keep only data for relevant keys (columns)
+        current_jobs = func.create_dataframe_with_dtypes(cfg.data_types)
         for job in jobs:
             flattened_job = func.flatten_dict(job)
             filtered_job = pd.Series(flattened_job)[cfg.data_types.keys()]
@@ -145,9 +146,13 @@ def scrape_jooble_backend(
             current_uids.append(filtered_job["uid"])
 
             # Add new row to results
-            all_jobs = pd.concat([all_jobs, filtered_job],
+            current_jobs = pd.concat([current_jobs, filtered_job],
                                  ignore_index=True)
         
+        # Add in gathered jobs
+        all_jobs = pd.concat([all_jobs, current_jobs],
+                            ignore_index=True)
+
         # Reset UIDs after extraction
         last_uids = tuple(current_uids)
 

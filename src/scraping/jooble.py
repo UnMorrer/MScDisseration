@@ -249,8 +249,7 @@ def get_all_full_job_descriptions(
     Inputs:
     new_df - DataFrame: DataFrame containing job information
     collected from (Jooble) website
-    previous_ids - list/pandas Series: All encountered previous
-    job IDs
+    previous_ids - list: All encountered previous job IDs
     uid_colname - str: Column name (in the new_df DataFrame)
     that selects the unique ID column.
     url_colname - str: Column name (in the new_df DataFrame)
@@ -269,7 +268,7 @@ def get_all_full_job_descriptions(
     if url_list is None:
         uids = new_df[uid_colname]
         # Select new jobs (UIDs not in previous_ids)
-        urls = new_df[~uids.isin(previous_ids)][url_colname]
+        urls = new_df[~uids.isin(previous_ids)][url_colname].tolist()
         unscraped_urls = urls.copy()
     else:
         urls = url_list
@@ -291,9 +290,10 @@ def get_all_full_job_descriptions(
         
         # Remove URL from unscraped list
         unscraped_urls.remove(url)
+        job_details = pd.DataFrame(job_details).T
 
         # Collect results into a DataFrame
-        full_job_details = pd.concat(full_job_details, job_details)
+        full_job_details = pd.concat([full_job_details, job_details])
 
     # Return results after succesful run
     return [], full_job_details

@@ -1,6 +1,5 @@
 # Common libraries
 import requests
-import common.config as cfg
 import json
 import bs4
 import logging
@@ -12,6 +11,7 @@ import random as rand
 # Custom packages
 import common.functions as func
 import common.scraping as scrape_utils
+import common.config as cfg
 
 def generate_post_request_json(page_num):
     """
@@ -24,16 +24,9 @@ def generate_post_request_json(page_num):
     Returns:
     request - dict: Request headers"""
 
-    jooble_post_json = {
-        "coords": None,
-        "isCityregion": False,
-        "isRemoteSerp": False,
-        "jobTypes": [],
-        "page": page_num,
-        "region": "Külföld",
-        "regionId": 4357,
-        "search": "",
-    }
+    jooble_post_json = cfg.jooble_post_json
+    jooble_post_json["page"] = page_num
+
     return jooble_post_json
 
 
@@ -94,6 +87,9 @@ def scrape_jooble_backend(
     total_pages = np.ceil(job_count/jobs_per_page).astype(int)
     logging.info(f"Found {job_count} jobs on {total_pages} pages.")
 
+    # Calculate pages to scrape: min(total_pages, max_page)
+    total_pages = min(total_pages, cfg.max_request_page_num)
+
     # Raise error if start_page is greater than total_pages:
     if start_page > total_pages:
         raise ValueError(f"Invalid start page ({start_page})! There are only {total_pages} pages")
@@ -106,7 +102,7 @@ def scrape_jooble_backend(
 
     # Scrape pages
     last_uids = tuple()# tuple to keep track of UIDs encountered
-    for page_num in range(start_page, cfg.max_request_page_num+1):
+    for page_num in range(start_page, total_pages+1):
         # Wait random time before every request
         time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
         logging.info(f"Trying page {page_num}/{total_pages}")
@@ -241,7 +237,7 @@ def get_full_job_description(
 
 def get_all_full_job_descriptions(
         new_df=None,
-        previous_ids=None,
+        previous_ids=[],
         uid_colname=cfg.unique_id_column_name,
         url_colname=cfg.link_colname,
         content_data_types=cfg.full_content_data_types,

@@ -1,6 +1,7 @@
 import re
 import os
 import pandas as pd
+import common.config as cfg
 
 def load_previous_data(
         folder_path,
@@ -16,6 +17,7 @@ def load_previous_data(
     filename_regex - str: Regular expression that defines the
     filenames. All filenames matching this RegEx will be loaded.
     If no input is given, ALL files in the folder will be read in.
+    unique_id_colname - str: Namwe for the column containing unique ID
     regex_kwargs - Arguments to be passed into the re.compile
     read_csv_kwards - Arguments to be passed to pd.read_csv().
 

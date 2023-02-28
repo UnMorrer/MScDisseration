@@ -51,7 +51,14 @@ def main(start_page, url_file_path):
         previous_ids = load.load_previous_data(
             os.getcwd() + cfg.save_dir,
             filename_regex=cfg.load_match_regex
-        )[cfg.unique_id_column_name]
+        )
+
+        # Handle case with no previous data
+        if len(previous_ids) == 0:
+             previous_ids = []
+
+        else:
+             previous_ids = previous_ids[cfg.unique_id_column_name]
 
         # Scrape full details for new jobs
         unscraped, full_details_df = jle.get_all_full_job_descriptions(

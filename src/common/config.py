@@ -60,6 +60,16 @@ jooble_post_headers = {
     "Sec-Fect-Site": "same-origin",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 }
+jooble_post_json = {
+        "coords": None,
+        "date": 8, #Last 24 hours
+        "isCityregion": False,
+        "isRemoteSerp": False,
+        "jobTypes": [],
+        "region": "Külföld",
+        "regionId": 4357,
+        "search": "",
+}
 jooble_post_cookies = {
     "SessionCookie.hu": "6570093076881681411*-8319916264116130067*638131947459790707"
 }

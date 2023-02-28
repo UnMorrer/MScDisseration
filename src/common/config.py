@@ -2,7 +2,8 @@ import time
 
 # Scraping parameters
 request_timeout = 10
-request_delay = [2, 10]
+request_delay = [2, 5]
+detailed_request_delay = [5, 15]
 max_unsuccessful_requests = 5
 max_request_page_num = 51 # No jobs retrieved after page 51
 
@@ -71,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "6570093076881681411*-1348402475470269684*638132089036422883"
+    "SessionCookie.hu": "6570093076881681411*-1348402475470269684*638132098440461268"
 }
 
 # GET request for full details
@@ -81,6 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
+    "Cookie": """@key@=1; TrafficSource=262145*0; SessionCookie.hu=6570093076881681411*-1348402475470269684*638132098440461268; SessionUtmCookie.hu=; xtest_620_1=2; LastVisit=2/28/2023 7:55:20 PM; sever=35; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYkF/2XBRJ5kAiyZxMQrB9IELAbY0E3JkN6vxc3Ls6aAs/sZqOOt480ObVKSxhFNFmjju+EWfHxPFC7fRuO9Zandyyucgg0ItWYm/cfr407cwAOgqyL8nIWGuj7TQ9ITQCDBz0xyo212QQ4ishfShx1S; shistory=%5b%7b%22sid%22%3a-8319916264116130067%2c%22ct%22%3a%222023-02-28T19%3a17%3a21.7043458%22%2c%22qh%22%3a0%2c%22rs%22%3a%22K%c3%bclf%c3%b6ld%22%2c%22ss%22%3a%22%22%7d%5d; cregion=4357; ver=desktop; AuthId=4106940555895744975; CookieScriptConsent={"googleconsentmap":{"ad_storage":"targeting","analytics_storage":"performance","functionality_storage":"functionality","personalization_storage":"functionality","security_storage":"functionality"},"action":"reject","categories":"[]","key":"cc8365db-45a2-430b-99b9-c5f063803c7b"}; ShouldShowSubscribeTooltip=1; ULang=0; uuid=-2398575995389841143; user_bucket=1; rk_groups=; g_state={"i_p":1677614679533,"i_l":1}; ssearchstring=; ts-consent={"date":"2023-02-28T18:10:20.018Z"}; datadome=0FzTOPK7-9E0m-wh9Xng_Ai74iylKvTVGAG4ccdbAzFc7A0LXi5PR9LoWnvCJfx92mkIDEySd9yq73vf1ieGTvLQw6s~8~E1z7e~BcU8J7kvmezm-SPvSbv5En_QnPz4; REGION_TOOLTIP_COOKIE=1""",
     "Referer": jooble_get_url,
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",

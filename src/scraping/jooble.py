@@ -127,8 +127,6 @@ def scrape_jooble_backend(
                     + f" Halted scraping on page {page_num}/{total_pages}")
                 
                 return all_jobs, page_num
-            
-        # TODO: Known "feature": Requests for page 52 and above return nothing
 
         # Keep only data for relevant keys (columns)
         current_jobs = func.create_dataframe_with_dtypes(cfg.data_types)
@@ -291,7 +289,7 @@ def get_all_full_job_descriptions(
             continue
 
         # Wait random time before every request
-        time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
+        time.sleep(rand.uniform(cfg.detailed_request_delay[0], cfg.detailed_request_delay[1]))
         try:
             job_details = get_full_job_description(url)
         except requests.HTTPError as e:

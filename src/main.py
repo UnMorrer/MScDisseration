@@ -79,7 +79,7 @@ def main(start_page, url_file_path):
     
     save.job_details(
         full_details_df,
-        append=append_save,
+        append=True,
         filename=(os.getcwd() + cfg.save_dir + "/" + cfg.full_desc_filename + ".csv")
     )
 

@@ -34,6 +34,18 @@ def flatten_dict(
     return dict(items)
 
 
+def list_dict_items(input_dict: dict):
+    """
+    Function to wrap every dictionary value into a list
+    """
+
+    out_dict = {}
+
+    for key, value in input_dict.items():
+        out_dict[key] = [value]
+    
+    return out_dict
+
 def create_dataframe_with_dtypes(dtypes):
     """
     Function that creates an empty dataframe with 

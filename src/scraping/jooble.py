@@ -126,7 +126,7 @@ def scrape_jooble_backend(
             empty_pages += 1
             logging.warning(f"Found no results on page {page_num}")
             if empty_pages >= max_empty_pages:
-                logging.warning(f"{max_empty_pages} found for scraping!"
+                logging.warning(f"{max_empty_pages} pages not found for scraping!"
                     + f" Halted scraping on page {page_num}/{total_pages}")
                 
                 return all_jobs, page_num
@@ -135,7 +135,10 @@ def scrape_jooble_backend(
         current_jobs = func.create_dataframe_with_dtypes(cfg.data_types)
         for job in jobs:
             flattened_job = func.flatten_dict(job)
-            filtered_job = pd.Series(flattened_job)[cfg.data_types.keys()]
+            flattened_job_list = func.list_dict_items(flattened_job)
+            filtered_job = pd.DataFrame.from_dict(data=flattened_job_list,
+                                                  orient='columns')
+            filtered_job = filtered_job[cfg.data_types.keys()]
 
             # Check if results are different
             if filtered_job["uid"] in last_uids:

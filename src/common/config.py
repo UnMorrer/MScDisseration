@@ -2,7 +2,7 @@ import time
 
 # Scraping parameters
 request_timeout = 10
-request_delay = [0.5, 2.0]
+request_delay = [2, 10]
 max_unsuccessful_requests = 5
 
 # API response keys retained -> fields with info I want to use

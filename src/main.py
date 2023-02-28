@@ -24,7 +24,7 @@ import file.load_results as load
 
 
 @click.command()
-@click.option("-sp", "--start-page", default=1, help="Start page of backend scraping")
+@click.option("-sp", "--start-page", default=392, help="Start page of backend scraping")
 @click.option("-ufp", "--url-file-path", default="", help="File path for detailed scraping URLs")
 def main(start_page, url_file_path):
     # Logging config:
@@ -42,7 +42,6 @@ def main(start_page, url_file_path):
     if url_file_path == "":
         # Scrape data
         job_df, last_page = jle.scrape_jooble_backend(start_page)
-        logging.info(f"Found {last_page} pages for jobs!")
 
         #Save results to .csv
         append_save = False if start_page == 1 else True

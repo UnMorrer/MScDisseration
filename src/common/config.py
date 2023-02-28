@@ -2,7 +2,9 @@ import time
 
 # Scraping parameters
 request_timeout = 10
-request_delay = [0.5, 2]
+request_delay = [0.5, 2.0]
+max_unsuccessful_requests = 5
+
 # API response keys retained -> fields with info I want to use
 data_types = {
     "uid": int,
@@ -58,7 +60,7 @@ jooble_post_headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "-7605529932450157550*2231947513189314018*638093143747064588"
+    "SessionCookie.hu": "6570093076881681411*-8319916264116130067*638131947459790707"
 }
 
 # GET request for full details

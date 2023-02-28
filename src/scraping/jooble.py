@@ -73,13 +73,18 @@ def get_jobs_from_backend(
     return job_count, job_details
 
 
-def scrape_jooble_backend(start_page=1):
+def scrape_jooble_backend(
+        start_page=1,
+        max_empty_pages=cfg.max_unsuccessful_requests
+        ):
     """
     Function that orchestrates scraping for Jooble.hu
 
     Inputs:
     start_page - int: First page to request for scraping.
     Allows resuming scraping after failure
+    max_empty_pages - int: Number of empty pages ([])
+    returned before scraping stops
     """
 
     # Obtain total number of jobs on Jooble
@@ -88,14 +93,22 @@ def scrape_jooble_backend(start_page=1):
     total_pages = np.ceil(job_count/jobs_per_page).astype(int)
     logging.info(f"Found {job_count} jobs on {total_pages} pages.")
 
+    # Raise error if start_page is greater than total_pages:
+    if start_page > total_pages:
+        raise ValueError(f"Invalid start page ({start_page})! There are only {total_pages} pages")
+
     # Create result output
     all_jobs = func.create_dataframe_with_dtypes(cfg.data_types)
+
+    # Create max empty pages stop condition
+    empty_pages = 0
 
     # Scrape pages
     last_uids = tuple()# tuple to keep track of UIDs encountered
     for page_num in range(start_page, total_pages+1):
         # Wait random time before every request
-        time.sleep(rand.uniform(*cfg.request_delay))
+        time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
+        logging.info(f"Trying page {page_num}/{total_pages}")
         current_uids = []
 
         # Check if request successful
@@ -107,6 +120,16 @@ def scrape_jooble_backend(start_page=1):
             logging.info(f"Scraping aborted on page {page_num}")
             return (all_jobs, #data
                     page_num) # last page retrieved
+        
+        # Stop scraping after 5 unsuccessful requests
+        if len(jobs) == 0:
+            empty_pages += 1
+            if empty_pages >= max_empty_pages:
+                logging.warning(f"{max_empty_pages} found for scraping!"
+                    + f" Halted scraping on page {page_num}/{total_pages}")
+                
+                return all_jobs, page_num
+
         # Keep only data for relevant keys (columns)
         for job in jobs:
             flattened_job = func.flatten_dict(job)
@@ -126,6 +149,8 @@ def scrape_jooble_backend(start_page=1):
         
         # Reset UIDs after extraction
         last_uids = tuple(current_uids)
+
+    return all_jobs, total_pages
 
 
 def get_full_job_description(
@@ -248,7 +273,7 @@ def get_all_full_job_descriptions(
     # Scrape their full details
     for url in urls:
         # Wait random time before every request
-        time.sleep(rand.uniform(*cfg.request_delay))
+        time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
         try:
             job_details = get_full_job_description(url)
         except requests.HTTPError as e:

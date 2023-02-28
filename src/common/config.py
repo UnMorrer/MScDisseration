@@ -4,6 +4,7 @@ import time
 request_timeout = 10
 request_delay = [2, 10]
 max_unsuccessful_requests = 5
+max_request_page_num = 51 # No jobs retrieved after page 51
 
 # API response keys retained -> fields with info I want to use
 data_types = {

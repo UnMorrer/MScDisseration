@@ -75,6 +75,7 @@ def get_jobs_from_backend(
 
 def scrape_jooble_backend(
         start_page=1,
+        end_page=cfg.max_request_page_num,
         max_empty_pages=cfg.max_unsuccessful_requests
         ):
     """
@@ -105,7 +106,7 @@ def scrape_jooble_backend(
 
     # Scrape pages
     last_uids = tuple()# tuple to keep track of UIDs encountered
-    for page_num in range(start_page, total_pages+1):
+    for page_num in range(start_page, cfg.max_request_page_num+1):
         # Wait random time before every request
         time.sleep(rand.uniform(cfg.request_delay[0], cfg.request_delay[1]))
         logging.info(f"Trying page {page_num}/{total_pages}")
@@ -130,6 +131,8 @@ def scrape_jooble_backend(
                     + f" Halted scraping on page {page_num}/{total_pages}")
                 
                 return all_jobs, page_num
+            
+        # TODO: Known "feature": Requests for page 52 and above return nothing
 
         # Keep only data for relevant keys (columns)
         current_jobs = func.create_dataframe_with_dtypes(cfg.data_types)

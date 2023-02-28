@@ -49,7 +49,7 @@ def main(start_page, url_file_path):
 
         # Load previous job data
         previous_ids = load.load_previous_data(
-            cfg.save_dir,
+            os.getcwd() + cfg.save_dir,
             filename_regex=cfg.load_match_regex
         )[cfg.unique_id_column_name]
 
@@ -63,7 +63,7 @@ def main(start_page, url_file_path):
          # Jump straight to detailed scraping upon failure
 
         # Load URLs into list:
-        with open(url_file_path, "r") as file:
+        with open(os.getcwd() +url_file_path, "r") as file:
              urls = [line.rstrip() for line in file]   
 
         unscraped, full_details_df = jle.get_all_full_job_descriptions(

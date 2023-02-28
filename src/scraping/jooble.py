@@ -141,12 +141,12 @@ def scrape_jooble_backend(
             filtered_job = filtered_job[cfg.data_types.keys()]
 
             # Check if results are different
-            if filtered_job["uid"] in last_uids:
+            if filtered_job["uid"][0] in last_uids:
                 logging.warning(
                     f"Same UID encountered twice during scraping: {filtered_job['uid']}")
             
             # Add to track current uid
-            current_uids.append(filtered_job["uid"])
+            current_uids.append(filtered_job["uid"][0])
 
             # Add new row to results
             current_jobs = pd.concat([current_jobs, filtered_job],

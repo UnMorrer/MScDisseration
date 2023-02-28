@@ -25,7 +25,7 @@ import file.load_results as load
 
 @click.command()
 @click.option("-sp", "--start-page", default=1, help="Start page of backend scraping")
-@click.option("-ufp", "--url-file-path", default="", help="File path for detailed scraping URLs")
+@click.option("-ufp", "--url-file-path", default="", help="Relative file path for detailed scraping URLs")
 def main(start_page, url_file_path):
     # Logging config:
     log_name = os.getcwd() + cfg.log_dir + r'/scrape_log_' + str(datetime.date.today()) + ".txt"
@@ -70,7 +70,7 @@ def main(start_page, url_file_path):
          # Jump straight to detailed scraping upon failure
 
         # Load URLs into list:
-        with open(os.getcwd() +url_file_path, "r") as file:
+        with open(os.getcwd()+url_file_path, "r") as file:
              urls = [line.rstrip() for line in file]   
 
         unscraped, full_details_df = jle.get_all_full_job_descriptions(
@@ -85,10 +85,9 @@ def main(start_page, url_file_path):
 
     # Save unscraped URLs if any left
     if len(unscraped) > 0:
-        with open(f"{cfg.save_dir}/unscraped_details_{cfg.timestring}.txt", 'w') as file:
+        with open(f"{os.getcwd()}/{cfg.save_dir}/unscraped_details_{cfg.timestring}.txt", 'w') as file:
                 for row in unscraped:
-                    s = ",\n".join(map(str, row))
-                    file.write(s+'\n')
+                    file.write(row+'\n')
 
 if __name__ == "__main__":
     main()

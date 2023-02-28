@@ -71,7 +71,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "6570093076881681411*-8319916264116130067*638131947459790707"
+    "SessionCookie.hu": "6570093076881681411*-1348402475470269684*638132089036422883"
 }
 
 # GET request for full details

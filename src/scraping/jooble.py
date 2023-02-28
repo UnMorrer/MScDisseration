@@ -278,9 +278,16 @@ def get_all_full_job_descriptions(
     full_job_details = func.create_dataframe_with_dtypes(content_data_types)
         
     # Scrape their full details
-    for url in urls:
+    for i in range(len(urls)):
+        url = urls[i]
+
+        # Progress printout - per 10 entries
+        if i % 10 == 0:
+            logging.info(f"Detailed scraping progress: {i}/{len(urls)}")
+
         # Skip if it points to external site - TODO
         if cfg.external_site_url in url:
+            logging.info(f"External site encountered during sraping: {url}")
             continue
 
         # Wait random time before every request

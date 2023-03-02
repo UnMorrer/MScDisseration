@@ -77,9 +77,11 @@ def main(start_page, url_file_path):
             url_list=urls
             )
     
+    append_save = True if url_file_path == "" else False
+
     save.job_details(
         full_details_df,
-        append=True,
+        append=append_save,
         filename=(os.getcwd() + cfg.save_dir + "/" + cfg.full_desc_filename + ".csv")
     )
 

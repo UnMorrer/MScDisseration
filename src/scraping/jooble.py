@@ -224,6 +224,11 @@ def get_full_job_description(
 
     # Unescape HTML encoding for job description
     job_description = details_flat_dict[cfg.job_full_details_column]
+
+    # Handle jobs no longer available
+    if job_description is None:
+        return None
+
     cleaned_job_description = scrape_utils.html_to_text(job_description)
     details_flat_dict[cfg.cleaned_job_full_details_column] = cleaned_job_description
 
@@ -299,6 +304,12 @@ def get_all_full_job_descriptions(
         
         # Remove URL from unscraped list
         unscraped_urls.remove(url)
+
+        # Handle jobs no longer available
+        if job_details is None:
+            logging.info(f"Job no longer available: {url}")
+            continue
+
         job_details = pd.DataFrame(job_details).T
 
         # Collect results into a DataFrame

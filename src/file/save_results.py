@@ -41,9 +41,11 @@ def job_details(
         except FileNotFoundError:
             logging.error(f"Existing data file {filename} not found.")
 
+            new_filename = (os.getcwd() + cfg.save_dir + "/" + "Dump_" + cfg.save_filename + ".csv")
+
             # Try to save as new file
-            job_df.to_csv("Dump_"+filename, mode="w", **kwargs)
-            logging.info("Dumped data to file Dump_" + f"{filename}")
+            job_df.to_csv(new_filename, mode="w", **kwargs)
+            logging.info(f"Dumped data to file {new_filename}")
         
         # Get unique UID values
         existing_uid = existing_df[cfg.unique_id_column_name].unique().tolist()

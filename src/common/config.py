@@ -119,7 +119,7 @@ cleaned_job_full_details_column = "jobDescriptionClean"
 timestring = time.strftime("%Y%m%d")
 save_dir = "/data"
 save_filename = f"JoobleData_{timestring}"
-full_desc_filename = f"JoodleData_FullDesc_{timestring}"
+full_desc_filename = f"JoobleData_FullDesc_{timestring}"
 unique_id_column_name = "uid"
 
 # Load parameters

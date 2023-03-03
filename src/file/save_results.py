@@ -40,6 +40,10 @@ def job_details(
             existing_df = pd.read_csv(filename, **kwargs)
         except FileNotFoundError:
             logging.error(f"Existing data file {filename} not found.")
+
+            # Try to save as new file
+            job_df.to_csv("Dump_"+filename, mode="w", **kwargs)
+            logging.info("Dumped data to file Dump_" + f"{filename}")
         
         # Get unique UID values
         existing_uid = existing_df[cfg.unique_id_column_name].unique().tolist()

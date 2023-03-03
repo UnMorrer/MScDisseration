@@ -46,6 +46,8 @@ def job_details(
             # Try to save as new file
             job_df.to_csv(new_filename, mode="w", **kwargs)
             logging.info(f"Dumped data to file {new_filename}")
+
+            return
         
         # Get unique UID values
         existing_uid = existing_df[cfg.unique_id_column_name].unique().tolist()

@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "-7271910383396867134*-6430216621463625115*638134691081316147"
+    "SessionCookie.hu": "717488192908976541*-8195877436708986266*638136040752647448"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """SessionCookie.hu=-7271910383396867134*-6430216621463625115*638134691081316147; SessionUtmCookie.hu=; TrafficSource=262145*0; xtest_620_1=2; LastVisit=3/3/2023 9:14:32 AM; sever=35; ver=desktop; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYlFKAOvQICOxmUH3BuW013i78DH5eKfk2MMFoFdKaEcyvnTo6ULdcET2THRCVFzFPhjDF9X7nD3VtgBtOekAUPkXBptOGD309sDKyC7FuZkLeB55hJFAnWo2BoVe1RKlAKt13OBNigYaXuw16l7CTta; CookieScriptConsent={"googleconsentmap":{"ad_storage":"targeting","analytics_storage":"performance","functionality_storage":"functionality","personalization_storage":"functionality","security_storage":"functionality"}}; AuthId=8692201674252901183; shistory=%5b%7b%22sid%22%3a-2804161527258974636%2c%22ct%22%3a%222023-03-03T09%3a14%3a39.2643253%22%2c%22qh%22%3a0%2c%22rs%22%3a%22K%c3%bclf%c3%b6ld%22%2c%22ss%22%3a%22%22%7d%5d; cregion=4357; datadome=1eCIqQVns3tqfbyhUhfq95amZWrjUzXEXzOFuLSawnWOMzdZEb0wVEvrcegQVff5B1OPzriuUMT_7jM8cCXl_36rOCx8T9V7nYlGkZ6Jl1wCVzbtBWR6s7u8dRVGbKnR; REGION_TOOLTIP_COOKIE=1; ULang=0; uuid=-616880823557514746""",
+    "Cookie": """@key@=1; datadome=3slFlTWnUApq-BSqfNlER-qW0DEQLN_De8OYzekrgnZF2Yco8KsAnOHYHjH6FfuaxJvU6coPjJU7MFpzhs8EA~F1feyrTg_6j9T~Iw_7Yfx-En9r8MogZah3J8e6eyOQ; SessionCookie.hu=7717488192908976541*-8195877436708986266*638136040941606805; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=12; xtest_620_2=1; LastVisit=3/5/2023 10:07:55 AM; uuid=-6024915278392295335; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYnv6eaDVxPuOkT6L+QzS0pKY+DitRlBoHpPZMtCcPtzZXocxQWEfeedaeBXe1fP5SqSKgoHeiomPTDvOTgWjICAxDNNNFcYgtzqDpN2/5NBLSAIi1t7Gl1nTg5H/e8wQ8Jc5egv7qu79fMOEIeqXDKx; REGION_TOOLTIP_COOKIE=1; ts-consent={"date":"2023-03-05T09:08:13.238Z"}""",
     "Referer": jooble_get_url,
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",

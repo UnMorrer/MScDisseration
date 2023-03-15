@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "-5650378044759625119*8259339899522101*638139463048607415"
+    "SessionCookie.hu": "-8999321339322072665*5551765932149547329*638144704503029704"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """@key@=1; datadome=3Q5M8de_kPY77OOe5kDXgyw6~tx-aV1mJjQ3RuW277O_EHwSPvlSrVgXvtC8~_c-cwXcPSVOrCevUpKY-Q6hZb~olMAqybyzRb7huppYSqPg_N_yhO5OphRwo84Pqvjf; SessionCookie.hu=-5650378044759625119*8259339899522101*638139463048607415; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=12; xtest_620_2=1; LastVisit=3/9/2023 9:11:38 AM; uuid=-5078007081945238633; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYmLFCp4OEDLKshUBWDZW2DWXHAVLmNLG1as6wSoTYkQ4mz4RmF0uw5XDzp3m6K174eyBXDHLgCjP7waBy9uU+u9bMq7AMlTgT4p3POknI+QvmE1cRZySnUqHmM7oHGjGhaQDkBnrWw1YEJ/2AxHIwEX; REGION_TOOLTIP_COOKIE=1""",
+    "Cookie": """@key@=1; datadome=pM7HkRqu5O21aXsnSlRmO3n_B~gEuTb7cSY4bLtZFR7PTssdjpt28oFWPRXMyuLN~kdJrKKwGsskHMEtC09KR-WA5z6ay-bg1_dHoxYbku4E_-bi0mJ-TCdIBg2KhK3; SessionCookie.hu=-8999321339322072665*5551765932149547329*638144704503029704; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=2; xtest_620_4=2; LastVisit=3/15/2023 10:47:26 AM; rk_groups=; sever=35; ver=desktop; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYkRy00+xayctfoWCHfgFN2fjrGk0UY0SqMYkje/Km3HKMD9wavJ+EmrktBAFwZwrBFM6pm8bW6BPfcZ9Mjcw1LxbHzMz+C7RAZLJlgswaP8GXIAE0nhE2VHym8aJnmZjYisesN1YIgTuOWHhPozW3Mr; REGION_TOOLTIP_COOKIE=1; ULang=0; uuid=-5597274976959275469""",
     "Referer": jooble_get_url,
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",

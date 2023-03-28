@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "9043639207638206409*2409951318961513993*638146390099370939"
+    "SessionCookie.hu": "-6917007307256428484*849535306726197260*638155871095594408"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """@key@=1; datadome=3HBmHpM1ia1i-dhNv0znBju9BOlfnaCZjld3k-5rpZyLFuwUJMF3NCSndAr80~md0EagQfZeA2g7mT90h95js5o8txTohWPiKXPN3Edp3S5Gf_oa8v6v6Gj82draGR0l; SessionCookie.hu=9043639207638206409*2409951318961513993*638146390099370939; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=8; xtest_620_4=0; LastVisit=3/17/2023 9:36:44 AM; uuid=4229583698541999320; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8H+K1ENDEvVDhhoVDlz6SYm1lQ5js40gek4haigCXkzqwDNLzl9edl50Rn62Z7430HuTOXat+xOvzfu63yOpid+JvmR6V0/ZUwzI+1Bashlcq0rbDxYxD2XKqqMq4NChiH79l32PT/5GgJ1N5wLP235b1fykvLID7koPeteAOEH7; REGION_TOOLTIP_COOKIE=1""",    "Referer": jooble_get_url,
+    "Cookie": """@key@=1; SessionCookie.hu=-6917007307256428484*849535306726197260*638155871095594408; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=4; xtest_628_0=1; LastVisit=3/28/2023 8:57:42 AM; uuid=4126606814879597746; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG2rJT6VvphkF/PZxb0ebjdlJsbHYmbb1GarhNBd2mZd3sSw1lkv6yRs4ePc2UXApA+O0kCViFAhpR1fL1+ADxqqdyH3E68+AcBh2ZhE6b1+1y5dB20Ld3kZSyts3V5yRygwf/JNRJUb8+KdqcXWlp/P; AuthId=-534647420240424391; ssearchstring=; cregion=4357; CookieScriptConsent={"action":"reject","categories":"[]","key":"fa99457a-88bc-4aec-9254-580d44e13aea"}; datadome=t-H1AyX1PJxdtdL7_vG6KfNLaa492_mucSuOYfHMuCpOFHFzZFn1YySXvf~94v4jWDvdQoIlBXgL3-vdrD2xa7Zrj4WdKW8LHxRBaZXYn~Y27mdR3~Z2l5WklC_K_zk; REGION_TOOLTIP_COOKIE=1; ShouldShowSubscribeTooltip=1; g_state={"i_p":1679997506730,"i_l":1}""",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",

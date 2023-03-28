@@ -301,6 +301,12 @@ def get_all_full_job_descriptions(
             logging.error(f"HTTP {e.response.status_code} error encountered during detailed scraping")
             logging.info(f"Scraping aborted for page {url}")
             return unscraped_urls, full_job_details
+        except AttributeError as e:
+            logging.info(f"No description for job: {url}")
+            # Remove URL from unscraped list
+            unscraped_urls.remove(url)
+            continue
+
         except:
             # Any other exception -> continue scraping
             logging.error(f"Unhandled error occurred in detailed scraping")

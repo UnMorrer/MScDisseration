@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "-6917007307256428484*849535306726197260*638155890124456513"
+    "SessionCookie.hu": "2721217798599165519*-3944139081951626828*638159301588299143"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """@key@=1; SessionCookie.hu=-6917007307256428484*849535306726197260*638155890124456513; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=4; xtest_628_0=1; LastVisit=3/28/2023 8:57:42 AM; uuid=4126606814879597746; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG2rJT6VvphkF/PZxb0ebjdlJsbHYmbb1GarhNBd2mZd3sSw1lkv6yRs4ePc2UXApA+O0kCViFAhpR1fL1+ADxqqdyH3E68+AcBh2ZhE6b1+1y5dB20Ld3kZSyts3V5yRygwf/JNRJUb8+KdqcXWlp/P; AuthId=-534647420240424391; ssearchstring=; cregion=4357; CookieScriptConsent={"action":"reject","categories":"[]","key":"fa99457a-88bc-4aec-9254-580d44e13aea"}; datadome=0w4FkbrQc1L9SfHbzwmDlGVTZXi-6af~6GfmhnwwHRSXfyt_HUH26LMP~tBDCaymu0Y-vhQ5UJhZy7EhiZ4-nIkXLRTyN01F-bZ-LuJ4Q3lE3D8OcAI3E06BzJGCAE8t; REGION_TOOLTIP_COOKIE=1; ShouldShowSubscribeTooltip=1; g_state={"i_p":1679997506730,"i_l":1}""",
+    "Cookie": """@key@=1; SessionCookie.hu=2721217798599165519*-3944139081951626828*638159301588299143; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=5; xtest_628_0=2; rk_groups=; sever=35; ULang=0; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG0CHJqEBNWi/C7RYx5GwynXNubke8ELQL6KqbYxKCgtMQKAd2BEITsGlZM3TQMzQa81ja3OgExQfEpWVbkJKh9U3UkFnE5epoGW6mwHfW7/ZjCXz+L65yBt/X/QKz0XWhoZSeEOJ804DVCteRiv14Ll; AuthId=-8290964824920865415; g_state={"i_p":1680340447031,"i_l":1}; CookieScriptConsent={"action":"reject","categories":"[]","key":"4403825f-d2a3-4a2a-a73f-4306730d12fa"}; datadome=3n7mcTDsGqm1rYlgdyIl3-DRb1ipvgK49ggkXpDuEAD1I~09Q1ocGF0GHvYqRzFtn7noK9nRwogQFnt94plyvoruCkQbmqniO3HrB2jhgOndJ1HV~GHCzNG4jXdHhyj1""",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",

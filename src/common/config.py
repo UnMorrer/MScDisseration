@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "2468176363730903309*-5884263312484502064*638161923041052027"
+    "SessionCookie.hu": "2468176363730903309*-5884263312484502064*638161926310871909"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """@key@=1; SessionCookie.hu=2468176363730903309*-5884263312484502064*638161923041052027; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=12; xtest_628_0=2; rk_groups=; sever=35; ULang=0; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG2+5ixLXMYnBY4equXHbm4Pfg8PTSKD7IJDiYpOpFY1uLCqycnkuEwoojzdU0fqsVgzrGmrTKHdscMGwn3tQ3rIMeLXsdINuussUSH74YnvrHA04JXbs0RlRIKHZi3ndaFuH4b1cQ6PIE8H8MsenfmK; AuthId=-7462547500838445253; g_state={"i_p":1680602193910,"i_l":1}; CookieScriptConsent={"action":"reject","categories":"[]","key":"b379cbef-71e1-40f3-8ce4-b658135f2050"}; datadome=1sm49oV9n0jmu7UHyyhJ8dmVaYWQng8KHvJwFzkcb5fnRenDwdywHrUCYRNRBanGTo8wz5HA_XJLaCUm7S7dO8k~4R2ueUFE7P_GYBwqJePqVMhXs07dPEiZhqXCsjZN; jaid=1610738828""",
+    "Cookie": """@key@=1; SessionCookie.hu=2468176363730903309*-5884263312484502064*638161926310871909; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=12; xtest_628_0=2; rk_groups=; sever=35; ULang=0; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG2+5ixLXMYnBY4equXHbm4Pfg8PTSKD7IJDiYpOpFY1uLCqycnkuEwoojzdU0fqsVgzrGmrTKHdscMGwn3tQ3rIMeLXsdINuussUSH74YnvrHA04JXbs0RlRIKHZi3ndaFuH4b1cQ6PIE8H8MsenfmK; AuthId=-7462547500838445253; g_state={"i_p":1680602193910,"i_l":1}; CookieScriptConsent={"action":"reject","categories":"[]","key":"b379cbef-71e1-40f3-8ce4-b658135f2050"}; datadome=402YdGilK1P6f5pKVd2Oz4x21h15d6xoCPvmhMTheKCoGkwaMF5nuwY6PEVk-5GOCnxS9tOX8DuuWEfzjP4ZKT1JQ2yjxBing64EboZjOVjO2hjgx1F~UFjxT4n226b5; jaid=1610738828; REGION_TOOLTIP_COOKIE=1""",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",

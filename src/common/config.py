@@ -72,7 +72,7 @@ jooble_post_json = {
         "search": "",
 }
 jooble_post_cookies = {
-    "SessionCookie.hu": "2468176363730903309*-5884263312484502064*638161926310871909"
+    "SessionCookie.hu": "5150933470332396708*7876963493565951500*638176607457360220"
 }
 
 # GET request for full details
@@ -82,7 +82,7 @@ jooble_get_headers = {
     "Connection": "keep-alive",
     "Host": "hu.jooble.org",
     "Origin": "https://hu.jooble.org",
-    "Cookie": """@key@=1; SessionCookie.hu=2468176363730903309*-5884263312484502064*638161926310871909; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=12; xtest_628_0=2; rk_groups=; sever=35; ULang=0; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG2+5ixLXMYnBY4equXHbm4Pfg8PTSKD7IJDiYpOpFY1uLCqycnkuEwoojzdU0fqsVgzrGmrTKHdscMGwn3tQ3rIMeLXsdINuussUSH74YnvrHA04JXbs0RlRIKHZi3ndaFuH4b1cQ6PIE8H8MsenfmK; AuthId=-7462547500838445253; g_state={"i_p":1680602193910,"i_l":1}; CookieScriptConsent={"action":"reject","categories":"[]","key":"b379cbef-71e1-40f3-8ce4-b658135f2050"}; datadome=402YdGilK1P6f5pKVd2Oz4x21h15d6xoCPvmhMTheKCoGkwaMF5nuwY6PEVk-5GOCnxS9tOX8DuuWEfzjP4ZKT1JQ2yjxBing64EboZjOVjO2hjgx1F~UFjxT4n226b5; jaid=1610738828; REGION_TOOLTIP_COOKIE=1""",
+    "Cookie": """datadome=0R_dygr0_DZlEmoEhZfb9OGbrMpaEvAR22PrFALOtYLCSdWQLApIMUPKs7hmgw4oQ2RHav5EnYD7xdkZNssGfK7Kqq0OW_RfhvY1ryqOmHsj3nrUWVDzOqT9812uWgJU; SessionCookie.hu=5150933470332396708*7876963493565951500*638176607457360220; SessionUtmCookie.hu=; TrafficSource=262145*0; user_bucket=2; LastVisit=4/21/2023 8:58:56 AM; uuid=202704847112643496; rk_groups=; sever=35; ULang=0; ver=desktop; .AspNetCore.Session=CfDJ8BTj75HgVZdJpis1gEsSmG1ywb5Z/TMZZ5LKXSU93RbAsts8jgPxooTUohrobDaQ+du4LbLMlB8RbwR7jAMcnYR+6H0+x8Wgg4mNt7tKJuPn/jcqJ0zRZgCupNZ9sDuLkmXUCC/XfG+D3dgbZnrr/s0sZb6eurasOulykVnKU9oC; REGION_TOOLTIP_COOKIE=1; CookieScriptConsent={"action":"accept","categories":"[\"targeting\",\"functionality\"]","key":"705802cd-6395-40d4-8bde-f5f4f563cf6f"}"""
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",

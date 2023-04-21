@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            //"args": ["-ufp", "/data/unscraped_details_20230404.txt"],
+            "args": ["-ufp", "/data/unscraped_details_20230421.txt"],
         }
     ]
 }

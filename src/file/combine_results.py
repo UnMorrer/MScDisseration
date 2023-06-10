@@ -52,6 +52,20 @@ def combine_tables(filePaths):
 
     return combined_df
 
+def unescape_description(jobDesc):
+    """
+    Function to unescape job description scraped 
+    (which includes HTML tags)
+    """
+    # use html_to_text from scraping.py in common folder
+    pass
+
+def unescape_content(jobDesc):
+    """
+    Function to unescape job content scraped 
+    (may not be needed - check encoding)
+    """
+
 if __name__ == "__main__":
     searchDirectory = "/home/omarci/masters/MScDisseration/data"
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")

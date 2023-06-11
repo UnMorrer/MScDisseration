@@ -25,8 +25,27 @@ def get_all_files(pattern, directory: str):
     
     return files
 
+def remove_newlines(input):
+    """
+    Function to remove newline characters to make the 2
+    descriptions identical
+
+    Inputs:
+    input - str: The raw string
+
+    Returns:
+    cleanedInput - str: String
+    with newline characters removed
+    """
+
+    cleanedInput = re.sub(r"\r?\n", "", input)
+    return cleanedInput
+
 # Combine them into one
-def combine_tables(filePaths, addDate=True, unescapeDescription=False):
+def combine_tables(filePaths, 
+                   addDate=True, 
+                   removeNewline=True, 
+                   unescapeDescription=False):
     """
     Function to take a list of paths and combine those
     (.csv) files together into a big table. Combines
@@ -60,6 +79,9 @@ def combine_tables(filePaths, addDate=True, unescapeDescription=False):
         
         if unescapeDescription:
             df["unescapedJobDesc"] = df.jobDescription.apply(scrape.html_to_text)
+        
+        if removeNewline:
+            df["cleanContent"] = df.content.apply(remove_newlines)
             
         dataframes.append(df)
 
@@ -68,14 +90,7 @@ def combine_tables(filePaths, addDate=True, unescapeDescription=False):
 
     return combined_df
 
-def unescape_content(jobDesc):
-    """
-    Function to unescape job content scraped 
-    (may not be needed - check encoding)
-    """
-
-if __name__ == "__main__" and __package__ is None:
-    __package__ == "src.file.combine_results"
+if __name__ == "__main__":
     searchDirectory = "/home/omarci/masters/MScDisseration/data"
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")
     fullDescRegex = re.compile(r"JoobleData_FullDesc_\d{8}.csv")
@@ -83,8 +98,10 @@ if __name__ == "__main__" and __package__ is None:
     jobFileList = get_all_files(jobFileRegex, searchDirectory)
     jobDescList = get_all_files(fullDescRegex, searchDirectory)
 
-    jobDf = combine_tables(jobFileList)
-    descDf = combine_tables(jobDescList)
+    jobDf = combine_tables(jobFileList, addDate=True, 
+                           removeNewline=True, unescapeDescription=False)
+    descDf = combine_tables(jobDescList, addDate=True, 
+                            removeNewline=False, unescapeDescription=True)
 
     # Filter for unique jobs using uid column
     jobDf.drop_duplicates(subset="uid", inplace=True)
@@ -105,3 +122,6 @@ if __name__ == "__main__" and __package__ is None:
     fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
     noDesc.to_csv("/home/omarci/masters/MScDisseration/data/merged_noDesc.csv")
     noJob.to_csv("/home/omarci/masters/MScDisseration/data/merged_onlyDesc.csv")
+
+    # Try 2nd round of matching with date AND job description
+    a=1

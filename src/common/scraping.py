@@ -1,7 +1,7 @@
 # HTML unescape function from:
 # https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
 
-import html
+import html.parser
 
 class HTMLTextExtractor(html.parser.HTMLParser):
     def __init__(self):

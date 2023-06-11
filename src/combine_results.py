@@ -3,6 +3,8 @@ import re
 import pandas as pd
 import datetime
 import common.scraping as scrape
+import common.config as cfg
+
 # Get all files matching name pattern
 def get_all_files(pattern, directory: str):
     """
@@ -25,6 +27,7 @@ def get_all_files(pattern, directory: str):
     
     return files
 
+
 def remove_newlines(input):
     """
     Function to remove newline characters to make the 2
@@ -40,6 +43,7 @@ def remove_newlines(input):
 
     cleanedInput = re.sub(r"\r?\n", "", input)
     return cleanedInput
+
 
 # Combine them into one
 def combine_tables(filePaths, 
@@ -90,10 +94,14 @@ def combine_tables(filePaths,
 
     return combined_df
 
+
 if __name__ == "__main__":
     searchDirectory = "/home/omarci/masters/MScDisseration/data"
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")
     fullDescRegex = re.compile(r"JoobleData_FullDesc_\d{8}.csv")
+
+    jobColumns = cfg.data_types.keys()
+    descColumns = cfg.full_content_data_types.keys()
 
     jobFileList = get_all_files(jobFileRegex, searchDirectory)
     jobDescList = get_all_files(fullDescRegex, searchDirectory)
@@ -105,6 +113,7 @@ if __name__ == "__main__":
 
     # Filter for unique jobs using uid column
     jobDf.drop_duplicates(subset="uid", inplace=True)
+    jobDf = jobDf.rename(columns={"Unnamed: 0_x": "0"})
     descDf.drop_duplicates(subset="uid", inplace=True)
 
     # Join the two based on UID
@@ -118,10 +127,26 @@ if __name__ == "__main__":
     noDesc = pd.merge(jobDf, descDf, on="uid", how="left", indicator=True)
     noDesc = noDesc[noDesc["_merge"] == "left_only"]
 
-    # Save matched results
-    fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
-    noDesc.to_csv("/home/omarci/masters/MScDisseration/data/merged_noDesc.csv")
-    noJob.to_csv("/home/omarci/masters/MScDisseration/data/merged_onlyDesc.csv")
-
     # Try 2nd round of matching with date AND job description
-    a=1
+    # noDesc - date_x has the date
+    # noJob - date_y has the date
+
+    # Rename some columns and remove others
+    noJob = noJob.rename(columns={
+        "0_y": "0",
+        "date_y": "date",
+    })
+    noJob = noJob[descColumns]
+
+    noDesc = noDesc.rename(columns={
+        "0_x": "0",
+        "date_x": "date",
+    })
+    noDesc = noDesc[jobColumns]
+
+    a = 1
+
+    # Save matched results
+    # fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
+    # noDesc.to_csv("/home/omarci/masters/MScDisseration/data/merged_noDesc.csv")
+    # noJob.to_csv("/home/omarci/masters/MScDisseration/data/merged_onlyDesc.csv")

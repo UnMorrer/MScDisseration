@@ -1,7 +1,8 @@
 import os
 import re
 import pandas as pd
-
+import datetime
+import common.scraping as scrape
 # Get all files matching name pattern
 def get_all_files(pattern, directory: str):
     """
@@ -25,7 +26,7 @@ def get_all_files(pattern, directory: str):
     return files
 
 # Combine them into one
-def combine_tables(filePaths):
+def combine_tables(filePaths, addDate=True, unescapeDescription=False):
     """
     Function to take a list of paths and combine those
     (.csv) files together into a big table. Combines
@@ -35,6 +36,11 @@ def combine_tables(filePaths):
     filePaths - [str]: List of filepath strings
     to read in and combine. Should be full/absolute
     paths.
+    addDate - bool: Add date as new "date" column
+    to the data
+    unescapeDescription - bool: Unescape HTML tags
+    and other characters in the jobDescription
+    column
 
     Returns:
     combined_df - The combined output. Column names inferred
@@ -45,6 +51,16 @@ def combine_tables(filePaths):
 
     for file in filePaths:
         df = pd.read_csv(file)
+
+        # Extract date from name
+        if addDate:
+            date = file[-12:-4]
+            dateObj = datetime.datetime.strptime(date, "%Y%m%d")
+            df["date"] = dateObj
+        
+        if unescapeDescription:
+            df["unescapedJobDesc"] = df.jobDescription.apply(scrape.html_to_text)
+            
         dataframes.append(df)
 
     # Combine dataframes together
@@ -52,21 +68,14 @@ def combine_tables(filePaths):
 
     return combined_df
 
-def unescape_description(jobDesc):
-    """
-    Function to unescape job description scraped 
-    (which includes HTML tags)
-    """
-    # use html_to_text from scraping.py in common folder
-    pass
-
 def unescape_content(jobDesc):
     """
     Function to unescape job content scraped 
     (may not be needed - check encoding)
     """
 
-if __name__ == "__main__":
+if __name__ == "__main__" and __package__ is None:
+    __package__ == "src.file.combine_results"
     searchDirectory = "/home/omarci/masters/MScDisseration/data"
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")
     fullDescRegex = re.compile(r"JoobleData_FullDesc_\d{8}.csv")

@@ -2,7 +2,7 @@ import os
 import re
 import pandas as pd
 import datetime
-import common.scraping as scrape
+import bs4
 import common.config as cfg
 
 # Get all files matching name pattern
@@ -45,6 +45,26 @@ def remove_newlines(input):
     return cleanedInput
 
 
+def clean_html(text):
+    """
+    Function to clean HTML text from tags and
+    unescape HTML characters
+    """
+    return bs4.BeautifulSoup(text, "lxml").text
+
+
+def extract_uid_from_url(url):
+    """
+    Function to extract job UID from job URL
+
+    Inputs:
+    url - string: The job URL
+
+    Returns:
+    uid - int: The job's unique ID
+    """
+    pass
+
 # Combine them into one
 def combine_tables(filePaths, 
                    addDate=True, 
@@ -82,7 +102,7 @@ def combine_tables(filePaths,
             df["date"] = dateObj
         
         if unescapeDescription:
-            df["unescapedJobDesc"] = df.jobDescription.apply(scrape.html_to_text)
+            df["unescapedJobDesc"] = df.jobDescription.apply(clean_html)
         
         if removeNewline:
             df["cleanContent"] = df.content.apply(remove_newlines)
@@ -100,8 +120,10 @@ if __name__ == "__main__":
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")
     fullDescRegex = re.compile(r"JoobleData_FullDesc_\d{8}.csv")
 
-    jobColumns = cfg.data_types.keys()
-    descColumns = cfg.full_content_data_types.keys()
+    jobColumns = list(cfg.data_types.keys()) 
+    jobColumns += ["date", "cleanContent"]
+    descColumns = list(cfg.full_content_data_types.keys()) 
+    descColumns += ["date", "unescapedJobDesc"]
 
     jobFileList = get_all_files(jobFileRegex, searchDirectory)
     jobDescList = get_all_files(fullDescRegex, searchDirectory)
@@ -110,11 +132,16 @@ if __name__ == "__main__":
                            removeNewline=True, unescapeDescription=False)
     descDf = combine_tables(jobDescList, addDate=True, 
                             removeNewline=False, unescapeDescription=True)
+    
+    descDf.drop(descDf[descDf['uid'] == "uid"].index, inplace=True) # TODO: Investigate
 
     # Filter for unique jobs using uid column
     jobDf.drop_duplicates(subset="uid", inplace=True)
     jobDf = jobDf.rename(columns={"Unnamed: 0_x": "0"})
     descDf.drop_duplicates(subset="uid", inplace=True)
+
+    print(f"Total jobs: {jobDf.shape[0]}")
+    print(f"Total descriptions: {descDf.shape[0]}")
 
     # Join the two based on UID
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
@@ -126,6 +153,10 @@ if __name__ == "__main__":
     # Same for description
     noDesc = pd.merge(jobDf, descDf, on="uid", how="left", indicator=True)
     noDesc = noDesc[noDesc["_merge"] == "left_only"]
+
+    print(f"No job: {noJob.shape[0]}")
+    print(f"No description: {noDesc.shape[0]}")
+    # GOOD till above point
 
     # Try 2nd round of matching with date AND job description
     # noDesc - date_x has the date
@@ -144,9 +175,34 @@ if __name__ == "__main__":
     })
     noDesc = noDesc[jobColumns]
 
-    a = 1
+    # Create new "content" column that is first 40 characters of description
+    noJob["shortContent"] = noJob.unescapedJobDesc.str.slice(0, 40)
+    noDesc["shortContent"] = noDesc.cleanContent.str.slice(0, 40)
+    # All shortContent unique - NOPE
+    # BUT date + shortContent IS unique
+
+    # Enforce 1:1 merge
+    noDesc.drop_duplicates(subset=["date", "shortContent"], inplace=True)
+    noJob.drop_duplicates(subset=["date", "shortContent"], inplace=True)
+
+    # Try another merge
+    mergeDf2 = pd.merge(noJob, noDesc, on=["date", "shortContent"], how="outer", indicator=True)
+    merged2 = mergeDf2[mergeDf2._merge == 'both']
+    unMerged2 = mergeDf2[mergeDf2._merge != 'both']
+
+    # Shapes
+    print(f"Matched on UID: {fullDf.shape[0]}")
+    print(f"Matched on date + desc: {mergeDf2[mergeDf2._merge == 'both'].shape[0]}")
 
     # Save matched results
-    # fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
-    # noDesc.to_csv("/home/omarci/masters/MScDisseration/data/merged_noDesc.csv")
-    # noJob.to_csv("/home/omarci/masters/MScDisseration/data/merged_onlyDesc.csv")
+    fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
+    merged2.to_csv("/home/omarci/masters/MScDisseration/data/merged_round2.csv")
+    unMerged2.to_csv("/home/omarci/masters/MScDisseration/data/unMerged_round2.csv")
+
+    # Further investigation bits:
+    # Some values in descDf are "uid" - strange....
+    # MergeDf2 - how many uids do NOT match
+
+    # TODO: New plan - get UID from URL to match
+
+    a = 1

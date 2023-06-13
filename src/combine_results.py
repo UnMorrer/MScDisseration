@@ -63,7 +63,9 @@ def extract_uid_from_url(url):
     Returns:
     uid - int: The job's unique ID
     """
-    pass
+    parts = url.replace("?", "/").split("/")
+    uid = parts[4]
+    return int(uid)
 
 # Combine them into one
 def combine_tables(filePaths, 
@@ -137,6 +139,7 @@ if __name__ == "__main__":
 
     # Filter for unique jobs using uid column
     jobDf.drop_duplicates(subset="uid", inplace=True)
+    # ALL uids in jobDf match that extracted from the URL
     jobDf = jobDf.rename(columns={"Unnamed: 0_x": "0"})
     descDf.drop_duplicates(subset="uid", inplace=True)
 
@@ -145,6 +148,7 @@ if __name__ == "__main__":
 
     # Join the two based on UID
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
+    # sum(fullDf.date_x != fullDf.date_y) -> 445
 
     # Investigate what could not be joined together
     noJob = pd.merge(jobDf, descDf, on="uid", how="right", indicator=True)
@@ -194,15 +198,27 @@ if __name__ == "__main__":
     print(f"Matched on UID: {fullDf.shape[0]}")
     print(f"Matched on date + desc: {mergeDf2[mergeDf2._merge == 'both'].shape[0]}")
 
+    # Combine matches
+    merged2.rename(inplace=True,
+                   columns={
+        "uid_y": "uid",
+    })
+    fullDf.rename(inplace=True, columns={
+        "date_y": "date",
+    })
+    fullDf.drop(inplace=True, columns=["Unnamed: 0_x", "date_x", "Unnamed: 0_y"])
+
+    merged2 = merged2[fullDf.columns]
+    mergedDf = pd.concat([fullDf, merged2], ignore_index=True)
+
     # Save matched results
-    fullDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
-    merged2.to_csv("/home/omarci/masters/MScDisseration/data/merged_round2.csv")
+    mergedDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
     unMerged2.to_csv("/home/omarci/masters/MScDisseration/data/unMerged_round2.csv")
 
     # Further investigation bits:
-    # Some values in descDf are "uid" - strange....
-    # MergeDf2 - how many uids do NOT match
+    # Some values in descDf are "uid" - strange.... -> happened because was collected as string
+    # + Related issue - some numbers had scientific notation or missing digits
 
-    # TODO: New plan - get UID from URL to match
+    # TODO: Write results + ideas on Overleaf, at least some code for future documentation
 
     a = 1

@@ -198,6 +198,9 @@ if __name__ == "__main__":
     print(f"Matched on UID: {fullDf.shape[0]}")
     print(f"Matched on date + desc: {mergeDf2[mergeDf2._merge == 'both'].shape[0]}")
 
+    # Non-matching dates in UID match:
+    # print(f"Nonmatching dates, UID join: {fullDf[fullDf.date_x != fullDf.date_y].shape[0]}")
+
     # Combine matches
     merged2.rename(inplace=True,
                    columns={

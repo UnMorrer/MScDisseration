@@ -8,6 +8,10 @@
 import pandas as pd
 import deepl
 import configparser
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Read in data
 df = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
@@ -64,5 +68,57 @@ def translate_job(
 # Discuss options with supervisor
 
 # Focus INSTEAD - remove duplicate advertisements
+# Cosine similarity
+# Clustering with InfoShield - language indep. -> on its way
+
+def calculate_cosine_similarity(texts):
+    """
+    Function that calculates cosine similarity of input texts
+
+    Inputs:
+    text - [str]: A list of texts to analyze
+    It has n elements
+
+    Returns:
+    cos_sim - matrix[int, n x n]: An n x n matrix
+    of cosine similarities between the texts
+    """
+
+    # Initialize tf-idf matrix
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(texts)
+
+    # Calculate the cosine similarity vector
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+    return cosine_sim
+
+# sum(df.unescapedJobDesc.isna()) -> 20
+# series = df.unescapedJobDesc.isna()
+# indices = series[series].index
+df.dropna(subset=["unescapedJobDesc"], inplace=True)
+cos_sim = calculate_cosine_similarity(df.unescapedJobDesc.tolist())
+
+# calculate some summary statistics
+print(f"Summary statistics for cosine similarity: {np.percentile(cos_sim, range(0,100,10))}")
+# Finding really similar ads:
+threshold = 0.9
+similar_ads = np.where((cos_sim > threshold) & (cos_sim < 0.99))
+print(f"Ad pairs with higher than {threshold} similarity: {len(similar_ads[0]/2)}")
+print(f"This is {len(similar_ads[0])/df.shape[0]**2}% of total pairs.")
+
+# Save output to image
+plt.imshow(cos_sim, cmap='Blues', vmin=0, vmax=1)
+plt.colorbar()
+plt.savefig('figures/cos_sim.png', dpi=300, bbox_inches='tight')
 
 a = 1
+
+# TODO: Examine countries and salary data
+
+# TODO: FIgure out a way to visualize the InfoShield results
+# /show them in a meaningful way in the paper
+
+# TODO: Look into LOCAL translation, or at least language detection
+# Translation lib: https://pypi.org/project/deep-translator/
+# Detection (local) lib: https://towardsdatascience.com/develop-a-text-language-detector-and-translator-system-in-python-6537d6244b10
+# --> Module: cld3 - https://github.com/google/cld3

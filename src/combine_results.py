@@ -213,6 +213,9 @@ if __name__ == "__main__":
 
     merged2 = merged2[fullDf.columns]
     mergedDf = pd.concat([fullDf, merged2], ignore_index=True)
+    mergedDf.rename_axis("id", inplace=True) # Rename index
+    # Drop NA job descriptions
+    mergedDf.dropna(subset=["unescapedJobDesc"], inplace=True)
 
     # Save matched results
     mergedDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")

@@ -2,6 +2,7 @@ import deep_translator as dptrans
 import pandas as pd
 import random as rnd
 import numpy as np
+import time
 
 merged_data_filepath = "/home/omarci/masters/MScDisseration/data/merged_full.csv"
 translations_filepath = "/home/omarci/masters/MScDisseration/data/translated_descriptions.csv"
@@ -13,7 +14,7 @@ translations_filepath = "/home/omarci/masters/MScDisseration/data/translated_des
 
 df = pd.read_csv(merged_data_filepath)
 translatedDescriptions = pd.read_csv(translations_filepath, index_col=False)
-batchSize = 25
+batchSize = 10
 
 def translate_job_deepl(
         jobDescBatch,
@@ -96,7 +97,7 @@ def translate_in_batches(
 
     Inputs:
     df - pd.DataFrame: A pandas DataFrame with at least
-    2 columns - id, jobDescription. One holds a unique 
+    2 columns - id, cleanContent. One holds a unique 
     identifier while the other has the texts to be
     translated.
     excludeIDs - [int]: A list of integer identifiers
@@ -119,15 +120,15 @@ def translate_in_batches(
 
     selectiondf = df[df['id'].isin(selectedIds)]
     outdf["id"] = selectiondf.id
-    outdf["translatedJobDesc"] = translate_job_deeptrans(selectiondf.jobDescription.tolist())
+    outdf["translatedJobDesc"] = translate_job_deeptrans(selectiondf.cleanContent.tolist())
     
     return outdf
 
 
 if __name__ == "__main__":
-    loopsLeft = np.ceil((df.shape[0] - translatedDescriptions.shape[0])/batchSize)
+    loopsLeft = int(np.ceil((df.shape[0] - translatedDescriptions.shape[0])/batchSize))
 
-    for i in range(loopsLeft):
+    for i in range(1):
         try:
             # Translate stuff
             returndf = translate_in_batches(df, translatedDescriptions.id.tolist(), batchSize=batchSize)
@@ -136,8 +137,11 @@ if __name__ == "__main__":
             translatedDescriptions = pd.concat(translatedDescriptions, returndf)
         except Exception as e:
             # Save if error
-            translatedDescriptions.to_csv(translatedDescriptions)
+            translatedDescriptions.to_csv(translations_filepath)
             print(f"Error occurred: {e}")
 
         print(f"Translation of batch {i} done")
         print(f"Progress: {i*batchSize}/{(df.shape[0] - translatedDescriptions.shape[0])}")
+
+        # Wait between tries
+        time.sleep(batchSize)

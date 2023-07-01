@@ -19,6 +19,7 @@ deepl = "^1.15.0"
 scikit-learn = "^1.2.2"
 matplotlib = "^3.7.1"
 deep-translator = "^1.11.1"
+gcld3 = "^3.0.13"
 
 
 [build-system]

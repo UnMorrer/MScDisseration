@@ -185,6 +185,14 @@ unicode = ["unicodedata2 (>=15.0.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
 
 [[package]]
+name = "gcld3"
+version = "3.0.13"
+description = "CLD3 is a neural network model for language identification."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "idna"
 version = "2.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -518,7 +526,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "62ec868ddbc2ca5792048f1bc06d99f62832a4c021512f512612202a3de52dfd"
+content-hash = "12ce111a91894ee0f350fe9bec7fe2fa4efc6acb49ed9cb3938761d961d1620e"
 
 [metadata.files]
 asgiref = [
@@ -658,6 +666,15 @@ fonttools = [
     {file = "fonttools-4.40.0-cp39-cp39-win_amd64.whl", hash = "sha256:7961575221e3da0841c75da53833272c520000d76f7f71274dbf43370f8a1065"},
     {file = "fonttools-4.40.0-py3-none-any.whl", hash = "sha256:200729d12461e2038700d31f0d49ad5a7b55855dec7525074979a06b46f88505"},
     {file = "fonttools-4.40.0.tar.gz", hash = "sha256:337b6e83d7ee73c40ea62407f2ce03b07c3459e213b6f332b94a69923b9e1cb9"},
+]
+gcld3 = [
+    {file = "gcld3-3.0.13-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:11a127e493c2952a83a957e2f025d6ff8b1d2efd353baa25bd99d7ceb3c96c54"},
+    {file = "gcld3-3.0.13-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:51538b26dd1741f49ceb03421710d4355c6ce3fd257a2ddebe868e36458f5d45"},
+    {file = "gcld3-3.0.13-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:fb745958278bfcc230fe3e15af3babb2752e77afd929ae0f95b9ef52648f3271"},
+    {file = "gcld3-3.0.13-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:c6bc0ecf3d95943a2b9fe61214aab8284a3b33f25e07c6caad064ea59417620f"},
+    {file = "gcld3-3.0.13-pp36-pypy36_pp73-macosx_10_9_x86_64.whl", hash = "sha256:b56a9852861c7209434917885b8331ddf5f11d3d5810baafb9a29ffd5ccd35d1"},
+    {file = "gcld3-3.0.13-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:4fc4ae1c8c7baab21a46fc66074787d010ca338f5c4b2ff80dd2448d18cc3d89"},
+    {file = "gcld3-3.0.13.tar.gz", hash = "sha256:47c8c779bfe7372a38564b0cd357556dc362aec81cb55b0c889059e8b952e959"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},

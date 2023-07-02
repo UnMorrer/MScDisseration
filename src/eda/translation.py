@@ -5,6 +5,11 @@ import numpy as np
 import time
 import gcld3
 
+# NOTE: Job descriptionss with more than 5000 characters
+# were truncated for 5k for translation purposes
+# TODO: Think about excluding jobs with fewer than 200 characters in description
+# NOTE: Detected English job descriptions are/were NOT translated
+
 merged_data_filepath = "/home/omarci/masters/MScDisseration/data/merged_full.csv"
 translations_filepath = "/home/omarci/masters/MScDisseration/data/translated_descriptions.csv"
 detection_filepath = "/home/omarci/masters/MScDisseration/data/lang_detection_output.csv"
@@ -248,11 +253,6 @@ if __name__ == "__main__":
         # Predictor is confident: 5 values below 50% probability
         # 0% - id 112: 1-word ad "Lakatos"
         # Rest below 50% are slavic (polish) + English mixed together
-
-        # NOTE: Job descriptionss with more than 5000 characters
-        # were truncated for 5k for translation purposes
-        # TODO: Exclude jobs with fewer than 200 characters in description
-        # NOTE: Detected English job descriptions are/were NOT translated
 
         # Check detection for English - probability
         engDf = languageDf[languageDf.descLanguage == "en"]

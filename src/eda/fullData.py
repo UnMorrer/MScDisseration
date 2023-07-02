@@ -62,8 +62,6 @@ plt.imshow(cos_sim, cmap='Blues', vmin=0, vmax=1)
 plt.colorbar()
 plt.savefig('figures/cos_sim.png', dpi=300, bbox_inches='tight')
 
-a = 1
-
 # Examine countries and salary data
 print(f"NO salary recorded for {sum(df.salary.isna())}/{df.shape[0]} observations")
 print(f"Country breakdown: {df.locationName.value_counts()}")

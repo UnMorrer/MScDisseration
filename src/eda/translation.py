@@ -17,23 +17,21 @@ merged_translated_data_filepath = "/home/omarci/masters/MScDisseration/data/merg
 df = pd.read_csv(merged_data_filepath)
 print(f"Number of nonexistent job descriptions: {sum(df.unescapedJobDesc.isna())}") # 20
 df.dropna(inplace=True, subset=["unescapedJobDesc"])
-# translatedDescriptions = pd.read_csv(translations_filepath, index_col=False)
-# translatedDescriptions = translatedDescriptions[["id", "translatedJobDesc"]]
 detectionDf = df[["id", "unescapedJobDesc"]]
+translatedDescriptions = pd.DataFrame({"id": [], "translatedJobDesc": []})
 
 # Translation settings
 batchSize = 10
-translate = True # Enable/do translation
+translate = False # Enable/do translation
 
 # Language detection settings
-detectLang = True
+detectLang = False
 detector = gcld3.NNetLanguageIdentifier(
     min_num_bytes=10,
     max_num_bytes=1000 #Truncates after
 )
 
-joinResults = True
-a = 1
+joinResults = False
 
 def translate_job_deepl(
         jobDescBatch,
@@ -120,14 +118,13 @@ def translate_in_batches(
     2 columns - id, cleanContent. One holds a unique 
     identifier while the other has the texts to be
     translated.
-    excludeIDs - [int]: A list of integer identifiers
-    that are to be excluded in the sampling
 
     Returns:
     translatedText - pd.DataFrame: A pandas DataFrame
     of size batchSize with 2 columns: id and translatedJobDesc
     that each hold a unique identifier and the translated job
     description
+    selectedIds - [int]: A list of IDs selected
     """
 
     outdf = pd.DataFrame()
@@ -142,7 +139,7 @@ def translate_in_batches(
     outdf["id"] = selectiondf.id
     outdf["translatedJobDesc"] = translate_job_deeptrans(selectiondf.unescapedJobDesc.tolist())
     
-    return outdf
+    return outdf, selectedIds
 
 
 def detect_language(row, detector):
@@ -167,49 +164,71 @@ def detect_language(row, detector):
     prob = result.probability
     
     return (lang, prob)
-
-# Post-hoc inspect translatedDescriptions
-# print(f"Summary stats: {translatedDescriptions.translatedJobDesc.describe()}")
-# print(f"Longest translation length: {max(translatedDescriptions.translatedJobDesc.str.len())}")
-# print(f"Shortest translation length: {min(translatedDescriptions.translatedJobDesc.str.len())}")
-# print(f"NA translations: {sum(translatedDescriptions.translatedJobDesc.isna())}")
-# print(f"Top translations: {translatedDescriptions.translatedJobDesc.value_counts()}")
-
-# Drop Error 400 rows
-# translatedDescriptions = translatedDescriptions[~translatedDescriptions['translatedJobDesc'].str.startswith("Error 400")]
-
 # Maximum translation can handle is 5000 characters - check how limiting this is...
 print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #209
 # Can we save them? Seems like a lot are in English?
 saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id
+# NOTE: Detected English job descriptions are/were NOT translated
 
 if __name__ == "__main__":
-    if translate:
-        for i in range(df.shape[0]):
-            try:
-                # Translate stuff
-                # returndf = translate_in_batches(df[["id", "unescapedJobDesc"]], translatedDescriptions.id.tolist(), batchSize=batchSize)
-                df["translatedJobDesc"] = df.apply(lambda row: pd.Series(translate_job_deeptrans([row["unescapedJobDesc"]])), axis=1)
-
-                # Capture results
-                # translatedDescriptions = pd.concat([translatedDescriptions, returndf])
-            except Exception as e:
-                # Save if error
-                df.to_csv(translations_filepath)
-                print(f"Error occurred: {e}")
-
-            print(f"Translation of item {i} done")
-            print(f"Progress: {i*batchSize}/{df.shape[0]}")
-
-            # Wait between tries
-            time.sleep(batchSize)
-        
-        # Save results
-        df.to_csv(translations_filepath)
-    
     if detectLang:
         detectionDf[['descLanguage', 'languageProb']] = detectionDf.apply(lambda row: pd.Series(detect_language(row, detector)), axis=1)
         detectionDf.to_csv(detection_filepath)
+
+    if translate:
+        # filter jobs that need translation
+        englishIds = detectionDf[detectionDf.descLanguage == "en"].id
+        translationDf = df[~df.id.isin(englishIds)].copy(deep=True)
+        translationDf["unescapedJobDesc"] = translationDf.unescapedJobDesc.str.slice(0, 4999)
+        notTranslated = []
+
+        for i in range(int(np.ceil(translationDf.shape[0]/batchSize))):
+            try:
+                # Translate stuff
+                returndf, selectedIds = translate_in_batches(
+                    translationDf[["id", "unescapedJobDesc"]],
+                    translatedDescriptions.id.tolist(),
+                    batchSize=batchSize)
+
+                # Capture results
+                translatedDescriptions = pd.concat([translatedDescriptions, returndf])
+                translatedDescriptions =  translatedDescriptions[["id", "translatedJobDesc"]]
+
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                print(f"Row IDs: {selectedIds}")
+                notTranslated.append(selectedIds)
+
+            # Wait between tries
+            time.sleep(batchSize)
+
+        # Retry missing values
+        missingText = df[df.id.isin(notTranslated)].copy(deep=True)
+        missingText["unescapedJobDesc"] = missingText.unescapedJobDesc.str.slice(0, 4999)
+        try:
+            returndf, _ = translate_in_batches(
+                        missingText[["id", "unescapedJobDesc"]],
+                        [],
+                        batchSize=missingText.shape[0])
+        except Exception as e:
+            print("Retry for translation failed!")
+
+        # Bring in English job descriptions
+        engJobDescDf = df[df.id.isin(englishIds)][["id", "unescapedJobDesc"]]
+        engJobDescDf.rename(
+            columns={"unescapedJobDesc": "translatedJobDesc"},
+            inplace=True
+        )
+        translationDf = pd.concat([engJobDescDf, translatedDescriptions, returndf])
+        translationDf.drop_duplicates(subset="id", inplace=True)
+
+        # Bring in original data
+        df["id"] = df.id.astype(int)
+        translationDf["id"] = translationDf.id.astype(int)
+        df = df.merge(translationDf, on=["id"], how="left")
+        
+        # Save results
+        translationDf.to_csv(translations_filepath)
 
     #Join results together
     if joinResults:
@@ -230,16 +249,23 @@ if __name__ == "__main__":
         # 0% - id 112: 1-word ad "Lakatos"
         # Rest below 50% are slavic (polish) + English mixed together
 
-        # On joining back, look for nan translatedJobDesc and replace with English jobs...
-        languageDf[languageDf.unescapedJobDesc.str.len() >= 5000].descLanguage.value_counts()
-        # Above has 28 values, below has 209 values
-        # WHY?
-        saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id
+        # NOTE: Job descriptionss with more than 5000 characters
+        # were truncated for 5k for translation purposes
+        # TODO: Exclude jobs with fewer than 200 characters in description
+        # NOTE: Detected English job descriptions are/were NOT translated
 
-        # Track by ID
-        languageDf[languageDf.id.isin(saveIds.tolist())].descLanguage.value_counts()
+        # Check detection for English - probability
+        engDf = languageDf[languageDf.descLanguage == "en"]
+        engDf.languageProb.describe()
+        unsureDf = engDf[engDf.languageProb < 0.9]
+        # Manual inspection: Mostly IT roles with full English description
+        # other than location and company name which confuses algorithm IMO
 
-        # NOTE: Exclude jobs with fewer than 200 characters in description
+        # Check detection probability a bit more
+        unsureDf = languageDf[languageDf.languageProb < 0.9]
+        # Other jobs (not categorized as English) have LOTs of English
+        # stuff in them (such as work technologies) but also
+        # most of the description body is in foreign language
+
+        # Save results
         languageDf.to_csv(merged_translated_data_filepath)
-
-        a = 1

@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 import bs4
 import common.config as cfg
+import datetime as dt
 
 # Get all files matching name pattern
 def get_all_files(pattern, directory: str):
@@ -135,7 +136,9 @@ if __name__ == "__main__":
     descDf = combine_tables(jobDescList, addDate=True, 
                             removeNewline=False, unescapeDescription=True)
     
-    descDf.drop(descDf[descDf['uid'] == "uid"].index, inplace=True) # TODO: Investigate
+    descDf.drop(descDf[descDf['uid'] == "uid"].index, inplace=True) # -> some are "uid"
+    # Descsription UIDs retrieved as string - NOT the best for ensuring records are intact
+    # See problems below...
 
     # Filter for unique jobs using uid column
     jobDf.drop_duplicates(subset="uid", inplace=True)
@@ -145,10 +148,21 @@ if __name__ == "__main__":
 
     print(f"Total jobs: {jobDf.shape[0]}")
     print(f"Total descriptions: {descDf.shape[0]}")
+    print(f"Unique IDs in jobs df: {len(jobDf.uid.unique())}")
+    print(f"Unique IDs in descriptions df: {len(descDf.uid.unique())}")
 
-    # Join the two based on UID
+
+    # Join the two based on UID and date
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
-    # sum(fullDf.date_x != fullDf.date_y) -> 445
+    print(f"jobDf date =/= descDf date, UID join: {sum(fullDf.date_x != fullDf.date_y)}") # -> 445
+    fullDf["dateDiff"] = fullDf.date_x - fullDf.date_y
+    # Examining time delta
+    print(f"Number of records with more than 2 days difference: {sum(abs(fullDf.dateDiff) >= dt.timedelta(days=2))}") # -> 295
+    # Drop if more than 2 days apart -> unlikely match
+    fullDf.drop(fullDf[abs(fullDf.dateDiff) >= dt.timedelta(days=2)].index, inplace=True)
+    print(f"Matched on date + UID: {fullDf.shape[0]}")
+    fullDf.drop(columns="dateDiff", inplace=True)
+
 
     # Investigate what could not be joined together
     noJob = pd.merge(jobDf, descDf, on="uid", how="right", indicator=True)
@@ -226,5 +240,7 @@ if __name__ == "__main__":
     # + Related issue - some numbers had scientific notation or missing digits
 
     # TODO: Write results + ideas on Overleaf, at least some code for future documentation
+    # NOTE: What if... join desc and job df on a daily basis -> considered, just use
+    # date variable to achieve same effect
 
     a = 1

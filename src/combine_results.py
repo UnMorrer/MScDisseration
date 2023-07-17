@@ -146,10 +146,10 @@ if __name__ == "__main__":
     jobDf = jobDf.rename(columns={"Unnamed: 0_x": "0"})
     descDf.drop_duplicates(subset="uid", inplace=True)
 
-    print(f"Total jobs: {jobDf.shape[0]}")
-    print(f"Total descriptions: {descDf.shape[0]}")
-    print(f"Unique IDs in jobs df: {len(jobDf.uid.unique())}")
-    print(f"Unique IDs in descriptions df: {len(descDf.uid.unique())}")
+    print(f"Total jobs: {jobDf.shape[0]}") #-> 6139
+    print(f"Total descriptions: {descDf.shape[0]}") #-> 5556
+    print(f"Unique IDs in jobs df: {len(jobDf.uid.unique())}") #-> 6139
+    print(f"Unique IDs in descriptions df: {len(descDf.uid.unique())}") #-> 5556
 
 
     # Join the two based on UID and date
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     print(f"Number of records with more than 2 days difference: {sum(abs(fullDf.dateDiff) >= dt.timedelta(days=2))}") # -> 295
     # Drop if more than 2 days apart -> unlikely match
     fullDf.drop(fullDf[abs(fullDf.dateDiff) >= dt.timedelta(days=2)].index, inplace=True)
-    print(f"Matched on date + UID: {fullDf.shape[0]}")
+    print(f"Matched on date + UID: {fullDf.shape[0]}")# -> 3334
     fullDf.drop(columns="dateDiff", inplace=True)
 
 
@@ -172,9 +172,8 @@ if __name__ == "__main__":
     noDesc = pd.merge(jobDf, descDf, on="uid", how="left", indicator=True)
     noDesc = noDesc[noDesc["_merge"] == "left_only"]
 
-    print(f"No job: {noJob.shape[0]}")
-    print(f"No description: {noDesc.shape[0]}")
-    # GOOD till above point
+    print(f"No job: {noJob.shape[0]}") #-> 1927
+    print(f"No description: {noDesc.shape[0]}") #-> 2510
 
     # Try 2nd round of matching with date AND job description
     # noDesc - date_x has the date
@@ -239,7 +238,6 @@ if __name__ == "__main__":
     # Some values in descDf are "uid" - strange.... -> happened because was collected as string
     # + Related issue - some numbers had scientific notation or missing digits
 
-    # TODO: Write results + ideas on Overleaf, at least some code for future documentation
     # NOTE: What if... join desc and job df on a daily basis -> considered, just use
     # date variable to achieve same effect
 

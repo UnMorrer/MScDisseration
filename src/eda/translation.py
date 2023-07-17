@@ -4,10 +4,10 @@ import random as rnd
 import numpy as np
 import time
 import gcld3
+import itertools
 
 # NOTE: Job descriptionss with more than 5000 characters
-# were truncated for 5k for translation purposes
-# TODO: Think about excluding jobs with fewer than 200 characters in description
+# or those with more than 200 characters were removed
 # NOTE: Detected English job descriptions are/were NOT translated
 
 merged_data_filepath = "/home/omarci/masters/MScDisseration/data/merged_full.csv"
@@ -20,6 +20,7 @@ merged_translated_data_filepath = "/home/omarci/masters/MScDisseration/data/merg
 # gcld3 on PyPi
 
 df = pd.read_csv(merged_data_filepath)
+print(f"Number of rows in input: {df.shape[0]}")
 print(f"Number of nonexistent job descriptions: {sum(df.unescapedJobDesc.isna())}") # 20
 df.dropna(inplace=True, subset=["unescapedJobDesc"])
 detectionDf = df[["id", "unescapedJobDesc"]]
@@ -27,16 +28,16 @@ translatedDescriptions = pd.DataFrame({"id": [], "translatedJobDesc": []})
 
 # Translation settings
 batchSize = 10
-translate = False # Enable/do translation
+translate = True # Enable/do translation
 
 # Language detection settings
-detectLang = False
+detectLang = True
 detector = gcld3.NNetLanguageIdentifier(
     min_num_bytes=10,
     max_num_bytes=1000 #Truncates after
 )
 
-joinResults = False
+joinResults = True
 
 def translate_job_deepl(
         jobDescBatch,
@@ -171,6 +172,7 @@ def detect_language(row, detector):
     return (lang, prob)
 # Maximum translation can handle is 5000 characters - check how limiting this is...
 print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #209
+print(f"Number of job descriptions below 200 characters: {sum(df.unescapedJobDesc.str.len() <= 200)}")
 # Can we save them? Seems like a lot are in English?
 saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id
 # NOTE: Detected English job descriptions are/were NOT translated
@@ -181,9 +183,16 @@ if __name__ == "__main__":
         detectionDf.to_csv(detection_filepath)
 
     if translate:
+        # Remove jobs with fewer than 200 or more than 5k characters
+        print(f"Number of rows in input: {df.shape[0]}")
+        longTexts = df[df.unescapedJobDesc.str.len() >= 5000].id # 205
+        shortTexts = df[df.unescapedJobDesc.str.len() <= 200].id # 165
+        translationDf = df[~(df.id.isin(longTexts) | df.id.isin(shortTexts))]
+        print(f"With short ({len(shortTexts)}) and long ({len(longTexts)}) texts removed: {translationDf.shape[0]}")
+
         # filter jobs that need translation
         englishIds = detectionDf[detectionDf.descLanguage == "en"].id
-        translationDf = df[~df.id.isin(englishIds)].copy(deep=True)
+        translationDf = translationDf[~translationDf.id.isin(englishIds)].copy(deep=True)
         translationDf["unescapedJobDesc"] = translationDf.unescapedJobDesc.str.slice(0, 4999)
         notTranslated = []
 
@@ -207,7 +216,8 @@ if __name__ == "__main__":
             # Wait between tries
             time.sleep(batchSize)
 
-        # Retry missing values
+        # Retry missing valuesú
+        notTranslated = list(itertools.chain(*notTranslated))
         missingText = df[df.id.isin(notTranslated)].copy(deep=True)
         missingText["unescapedJobDesc"] = missingText.unescapedJobDesc.str.slice(0, 4999)
         try:
@@ -267,5 +277,8 @@ if __name__ == "__main__":
         # stuff in them (such as work technologies) but also
         # most of the description body is in foreign language
 
+        print(f"Number of rows in output: {languageDf.shape[0]}")
         # Save results
         languageDf.to_csv(merged_translated_data_filepath)
+
+    a = 1

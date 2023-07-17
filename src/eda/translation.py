@@ -247,13 +247,17 @@ if __name__ == "__main__":
 
     #Join results together
     if joinResults:
-        # df - 4878 x 43
-        # translatedDescriptions - 4903 x 5
-        # detectionDf - 4878 x 5
+        # df -> 4584
+        # languageDf -> 4214 after  165 + 205 extremes removed
         detectionDf = pd.read_csv(detection_filepath)
 
         df["id"] = df.id.astype(int)
         languageDf = df.merge(detectionDf[["id", "descLanguage", "languageProb"]], on=["id"], how="left")
+
+        # Drop short and long texts from output
+        longTexts = df[df.unescapedJobDesc.str.len() >= 5000].id # 205
+        shortTexts = df[df.unescapedJobDesc.str.len() <= 200].id # 165
+        languageDf = languageDf[~(languageDf.id.isin(longTexts) | languageDf.id.isin(shortTexts))]
 
         # Summary stats about language
         print(f"Language counts: {languageDf.descLanguage.value_counts()}")
@@ -261,8 +265,6 @@ if __name__ == "__main__":
         # (Other: lithuanian, polish, russian, ukrainian, romanian, french)
         languageDf.languageProb.describe()
         # Predictor is confident: 5 values below 50% probability
-        # 0% - id 112: 1-word ad "Lakatos"
-        # Rest below 50% are slavic (polish) + English mixed together
 
         # Check detection for English - probability
         engDf = languageDf[languageDf.descLanguage == "en"]

@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     jobColumns = list(cfg.data_types.keys()) 
     jobColumns += ["date", "cleanContent"]
-    descColumns = list(cfg.full_content_data_types.keys()) 
+    descColumns = list(cfg.full_content_data_types.keys()) + ["id"]
     descColumns += ["date", "unescapedJobDesc"]
 
     jobFileList = get_all_files(jobFileRegex, searchDirectory)
@@ -151,6 +151,9 @@ if __name__ == "__main__":
     print(f"Unique IDs in jobs df: {len(jobDf.uid.unique())}") #-> 6139
     print(f"Unique IDs in descriptions df: {len(descDf.uid.unique())}") #-> 5556
 
+    # Save all descriptions for InfoShield analysis
+    descDf["id"] = descDf.index + 1 # create ID to enable tracking in InfoShield
+    descDf.to_csv("/home/omarci/masters/MScDisseration/data/all_descriptions.csv")
 
     # Join the two based on UID and date
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
@@ -226,7 +229,7 @@ if __name__ == "__main__":
 
     merged2 = merged2[fullDf.columns]
     mergedDf = pd.concat([fullDf, merged2], ignore_index=True)
-    mergedDf.rename_axis("id", inplace=True) # Rename index
+
     # Drop NA job descriptions
     mergedDf.dropna(subset=["unescapedJobDesc"], inplace=True)
 

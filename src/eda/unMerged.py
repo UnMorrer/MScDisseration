@@ -1,7 +1,7 @@
 # Exploratory Data Analysis for jobs with only description
 import pandas as pd
 
-df = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_onlyDesc.csv")
+df = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_onlyDesc.csv")
 
 # Size
 print(df.shape)
@@ -14,7 +14,7 @@ print(sum(df.jobDescription.isna()))
 # NO URL or UID - Can I use the job description to match
 # Exploratory data analysis for jobs without description
 
-df = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_noDesc.csv")
+df = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_noDesc.csv")
 
 print(df.shape)
 

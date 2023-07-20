@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mscdisseration"
+name = "MScDissertation"
 version = "0.1.0"
 description = ""
 authors = ["Marcell O <omarcell@yahoo.com>"]

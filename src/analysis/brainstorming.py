@@ -8,7 +8,7 @@
 # Other than InfoShield, do I have other clustering methods available?
 import pandas as pd
 
-translatedDf = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_translated_full.csv")
+translatedDf = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_translated_full.csv")
 
 # InfoShield - 3 interesting clustering methods
 # 1 -> unescaped text, all job adverts
@@ -17,4 +17,4 @@ translatedDf = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_tran
 
 a = 1
 
-# outDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_translated_full.csv") # -> 4206 recordstrans
+# outDf.to_csv("/home/omarci/masters/MScDissertation/data/merged_translated_full.csv") # -> 4206 recordstrans

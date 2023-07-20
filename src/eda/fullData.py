@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Read in data
-df = pd.read_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
+df = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_full.csv")
 config = configparser.ConfigParser()
 config.read(".env")
 

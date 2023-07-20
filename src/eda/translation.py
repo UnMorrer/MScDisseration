@@ -10,10 +10,10 @@ import itertools
 # or those with more than 200 characters were removed
 # NOTE: Detected English job descriptions are/were NOT translated
 
-merged_data_filepath = "/home/omarci/masters/MScDisseration/data/merged_full.csv"
-translations_filepath = "/home/omarci/masters/MScDisseration/data/translated_descriptions.csv"
-detection_filepath = "/home/omarci/masters/MScDisseration/data/lang_detection_output.csv"
-merged_translated_data_filepath = "/home/omarci/masters/MScDisseration/data/merged_translated_full.csv"
+merged_data_filepath = "/home/omarci/masters/MScDissertation/data/merged_full.csv"
+translations_filepath = "/home/omarci/masters/MScDissertation/data/translated_descriptions.csv"
+detection_filepath = "/home/omarci/masters/MScDissertation/data/lang_detection_output.csv"
+merged_translated_data_filepath = "/home/omarci/masters/MScDissertation/data/merged_translated_full.csv"
 
 # Translation lib: https://pypi.org/project/deep-translator/
 # Detection (local) lib: https://towardsdatascience.com/introduction-to-googles-compact-language-detector-v3-in-python-b6887101ae47

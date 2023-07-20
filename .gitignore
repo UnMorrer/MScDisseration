@@ -136,3 +136,6 @@ dmypy.json
 
 # Figures
 /figures
+
+# Results
+/results

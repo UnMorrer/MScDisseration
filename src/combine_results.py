@@ -119,7 +119,7 @@ def combine_tables(filePaths,
 
 
 if __name__ == "__main__":
-    searchDirectory = "/home/omarci/masters/MScDisseration/data"
+    searchDirectory = "/home/omarci/masters/MScDissertation/data"
     jobFileRegex = re.compile(r"JoobleData_\d{8}.csv")
     fullDescRegex = re.compile(r"JoobleData_FullDesc_\d{8}.csv")
 
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     # Save all descriptions for InfoShield analysis
     descDf["id"] = descDf.index + 1 # create ID to enable tracking in InfoShield
-    descDf.to_csv("/home/omarci/masters/MScDisseration/data/all_descriptions.csv")
+    descDf.to_csv("/home/omarci/masters/MScDissertation/data/all_descriptions.csv")
 
     # Join the two based on UID and date
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
@@ -234,8 +234,8 @@ if __name__ == "__main__":
     mergedDf.dropna(subset=["unescapedJobDesc"], inplace=True)
 
     # Save matched results
-    mergedDf.to_csv("/home/omarci/masters/MScDisseration/data/merged_full.csv")
-    unMerged2.to_csv("/home/omarci/masters/MScDisseration/data/unMerged_round2.csv")
+    mergedDf.to_csv("/home/omarci/masters/MScDissertation/data/merged_full.csv")
+    unMerged2.to_csv("/home/omarci/masters/MScDissertation/data/unMerged_round2.csv")
 
     # Further investigation bits:
     # Some values in descDf are "uid" - strange.... -> happened because was collected as string

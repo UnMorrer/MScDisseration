@@ -139,3 +139,6 @@ dmypy.json
 
 # Results
 /results
+
+# InfoShield output
+/InfoShield

@@ -27,6 +27,7 @@ for df in [infoshield1full, infoshield2full, infoshield3full]:
     df.drop(columns=["Unnamed: 0.1", "Unnamed: 0"], inplace=True)
 
 # TODO: Only label observations that belong in clusters!
+# NOTE: Good idea, BUT - cannot establish whether this is good for detecting job adverts with many indicators if only cluster data is labelled
 
 a = 1
 

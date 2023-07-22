@@ -6,7 +6,7 @@ cd "/home/omarci/masters/MScDissertation/"
 rm -rf "InfoShield"; mkdir "InfoShield"
 
 # 1 -> unescaped text, all job adverts
-"/home/omarci/.cache/pypoetry/virtualenvs/infoshield--uNm2Cza-py3.10/bin/python" "/home/omarci/masters/InfoShield/infoshield.py" "/home/omarci/masters/MScDissertation/data/all_descriptions.csv" "id" "unescapedJobDesc"
+"/home/omarci/.cache/pypoetry/virtualenvs/infoshield--uNm2Cza-py3.10/bin/python" "/home/omarci/masters/InfoShield/infoshield.py" "/home/omarci/masters/MScDissertation/data/all_descriptions_translated_full.csv" "id" "unescapedJobDesc"
 # Move results from InfoShield
 mv -f "/home/omarci/masters/MScDissertation/results/" "/home/omarci/masters/MScDissertation/InfoShield/allAdverts"
 # Move data (LSH) from data folder

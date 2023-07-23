@@ -51,7 +51,7 @@ def clean_html(text):
     Function to clean HTML text from tags and
     unescape HTML characters
     """
-    return bs4.BeautifulSoup(text, "lxml").text
+    return bs4.BeautifulSoup(text, "html.parser").text
 
 
 def extract_uid_from_url(url):

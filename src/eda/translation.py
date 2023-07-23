@@ -281,6 +281,6 @@ if __name__ == "__main__":
 
         print(f"Number of rows in output: {languageDf.shape[0]}")
         # Save results
-        languageDf.to_csv(merged_translated_data_filepath)
+        languageDf.to_csv(merged_translated_data_filepath, encoding='utf-8')
 
     a = 1

@@ -10,8 +10,8 @@ rm -rf "InfoShield"; mkdir "InfoShield"
 # Move results from InfoShield
 mv -f "/home/omarci/masters/MScDissertation/results/" "/home/omarci/masters/MScDissertation/InfoShield/allAdverts"
 # Move data (LSH) from data folder
-mv -f "/home/omarci/masters/MScDissertation/data/all_descriptions_full_LSH_labels.csv" "/home/omarci/masters/MScDissertation/InfoShield/all_descriptions_full_LSH_labels.csv"
-mv -f "/home/omarci/masters/MScDissertation/data/all_descriptions_LSH_labels.csv" "/home/omarci/masters/MScDissertation/InfoShield/all_descriptions_LSH_labels.csv"
+mv -f "/home/omarci/masters/MScDissertation/data/all_descriptions_translated_full_LSH_labels.csv" "/home/omarci/masters/MScDissertation/InfoShield/all_descriptions_full_full_LSH_labels.csv"
+mv -f "/home/omarci/masters/MScDissertation/data/all_descriptions_translated_LSH_labels.csv" "/home/omarci/masters/MScDissertation/InfoShield/all_descriptions_full_LSH_labels.csv"
 mv -f "/home/omarci/masters/MScDissertation/compression_rate.csv" "/home/omarci/masters/MScDissertation/InfoShield/allAdverts/compression_rate.csv"
 mv -f "/home/omarci/masters/MScDissertation/template_table.csv" "/home/omarci/masters/MScDissertation/InfoShield/allAdverts/template_table.csv"
 

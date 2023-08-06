@@ -2,6 +2,7 @@
 # Variables that "define" clusters -> low intra-cluster variance and high inter-cluster variance
 # adjusted rand index???
 # TODO: Change female and male to gender neutral (reflects reality more...)
+# TODO: Look at job descriptions that didn't make it to labels.xlsx...
 
 # Other than InfoShield, do I have other clustering methods available?
 import pandas as pd

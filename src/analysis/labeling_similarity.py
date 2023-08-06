@@ -40,14 +40,9 @@ dataTypes = {
     "socialBenefits": str
 }
 
-allLabels = pd.read_excel(allLabels, usecols=list(dataTypes.keys()), na_values="Not specified").astype(dataTypes)
+allLabels = pd.read_excel(allLabels, usecols=list(dataTypes.keys()), na_values=["Not specified", "not specified"]).astype(dataTypes)
 emaLabels = pd.read_excel(marcellLabels, na_values="Not specified").astype(dataTypes)
 marcellLabels = pd.read_excel(marcellLabels, na_values="Not specified").astype(dataTypes)
-
-# Reindex using ID
-emaLabels = emaLabels.reindex(index=emaLabels.id)
-marcellLabels = marcellLabels.reindex(index=marcellLabels.id)
-allLabels = allLabels.reindex(index=allLabels.id)
 
 # Labeler alignment comparison
 print(f"Labeler alignment: {emaLabels.compare(marcellLabels)}")
@@ -55,15 +50,31 @@ print(f"Labeler alignment: {emaLabels.compare(marcellLabels)}")
 # Prepare for comparison with all labels
 emaLabels.drop(columns=["unescapedJobDesc", "translatedJobDesc"], inplace=True)
 marcellLabels.drop(columns=["unescapedJobDesc", "translatedJobDesc"], inplace=True)
-emaLabels = emaLabels[emaLabels.id.isin(emaIDs)].copy()
-marcellLabels = marcellLabels[marcellLabels.id.isin(marcellIDs)].copy()
+emaLabels = emaLabels[emaLabels.id.isin(emaIDs)].copy().sort_values("id").reset_index(drop=True)
+marcellLabels = marcellLabels[marcellLabels.id.isin(marcellIDs)].copy().sort_values("id").reset_index(drop=True)
 
-allLabelsEma = allLabels[allLabels.id.isin(emaIDs)]
-allLabelsMarcell = allLabels[allLabels.id.isin(marcellIDs)]
+allLabelsEma = allLabels[allLabels.id.isin(emaIDs)].sort_values("id").reset_index(drop=True)
+allLabelsMarcell = allLabels[allLabels.id.isin(marcellIDs)].sort_values("id").reset_index(drop=True)
 
-print(f"Comparison between Ema and future labels: {allLabelsEma.compare(emaLabels)}")
-print(f"Comparison between Marcell and future labels: {allLabelsMarcell.compare(marcellLabels)}")
+emaCompared = allLabelsEma.compare(emaLabels)
+marcellCompared = allLabelsMarcell.compare(marcellLabels)
 
-# TODO: Double-check - initial results suggest perfect alignment which is GREAT!!!
+print(f"Comparison between Ema and future labels: {emaCompared}")
+print(f"Comparison between Marcell and future labels: {marcellCompared}")
+# Number of misaligned labels + distribution
+# NOTE: NaN-related mislabeling is NOT counted in below!
+print(f"Ema-label, mislabeling by column name: {allLabelsEma.ne(emaLabels).sum(axis=0)}")
+print(f"Marcell-label, mislabeling by column name: {allLabelsMarcell.ne(marcellLabels).sum(axis=0)}")
+
+# Add ID to saved result for further analysis
+emaCompared = emaCompared.merge(marcellLabels.id, left_index=True, right_index=True)
+marcellCompared = marcellCompared.merge(marcellLabels.id, left_index=True, right_index=True)
+
+# Within-labeler variance - save for further analysis
+# Most due to industry/sector available in labels, job nature, working hours range, and previous experience
+emaCompared.to_csv("/home/omarci/masters/MScDissertation/data/ema_compare_labels.csv")
+
+# Most due to much better job nature categorization in all/finished labels AND working hours
+marcellCompared.to_csv("/home/omarci/masters/MScDissertation/data/marcell_compare_labels.csv")
 
 a = 1

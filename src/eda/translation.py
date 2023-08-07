@@ -28,16 +28,16 @@ translatedDescriptions = pd.DataFrame({"id": [], "translatedJobDesc": []})
 
 # Translation settings
 batchSize = 10
-translate = False # Enable/do translation
+translate = True # Enable/do translation
 
 # Language detection settings
-detectLang = False
+detectLang = True
 detector = gcld3.NNetLanguageIdentifier(
     min_num_bytes=10,
     max_num_bytes=1000 #Truncates after
 )
 
-joinResults = False
+joinResults = True
 
 def translate_job_deepl(
         jobDescBatch,

@@ -21,7 +21,7 @@ merged_translated_data_filepath = "/home/omarci/masters/MScDissertation/data/all
 
 df = pd.read_csv(merged_data_filepath)
 print(f"Number of rows in input: {df.shape[0]}")
-print(f"Number of nonexistent job descriptions: {sum(df.unescapedJobDesc.isna())}") # 20
+print(f"Number of nonexistent job descriptions: {sum(df.unescapedJobDesc.isna())}") # 0
 df.dropna(inplace=True, subset=["unescapedJobDesc"])
 detectionDf = df[["id", "unescapedJobDesc"]]
 translatedDescriptions = pd.DataFrame({"id": [], "translatedJobDesc": []})
@@ -171,7 +171,7 @@ def detect_language(row, detector):
     
     return (lang, prob)
 # Maximum translation can handle is 5000 characters - check how limiting this is...
-print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #239
+print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #241
 print(f"Number of job descriptions below 200 characters: {sum(df.unescapedJobDesc.str.len() <= 200)}") #257
 # Can we save them? Seems like a lot are in English?
 saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id

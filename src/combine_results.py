@@ -49,9 +49,10 @@ def remove_newlines(input):
 def clean_html(text):
     """
     Function to clean HTML text from tags and
-    unescape HTML characters
+    unescape HTML characters. Keeps newlines
+    in original html
     """
-    return bs4.BeautifulSoup(text, "html.parser").text
+    return bs4.BeautifulSoup(text, "html.parser").get_text("\n")
 
 
 def extract_uid_from_url(url):

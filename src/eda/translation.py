@@ -28,16 +28,16 @@ translatedDescriptions = pd.DataFrame({"id": [], "translatedJobDesc": []})
 
 # Translation settings
 batchSize = 10
-translate = True # Enable/do translation
+translate = False # Enable/do translation
 
 # Language detection settings
-detectLang = True
+detectLang = False
 detector = gcld3.NNetLanguageIdentifier(
     min_num_bytes=10,
     max_num_bytes=1000 #Truncates after
 )
 
-joinResults = True
+joinResults = False
 
 def translate_job_deepl(
         jobDescBatch,
@@ -171,8 +171,8 @@ def detect_language(row, detector):
     
     return (lang, prob)
 # Maximum translation can handle is 5000 characters - check how limiting this is...
-print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #209
-print(f"Number of job descriptions below 200 characters: {sum(df.unescapedJobDesc.str.len() <= 200)}")
+print(f"Number of job descriptions above 5000 characters: {sum(df.unescapedJobDesc.str.len() >= 5000)}") #239
+print(f"Number of job descriptions below 200 characters: {sum(df.unescapedJobDesc.str.len() <= 200)}") #257
 # Can we save them? Seems like a lot are in English?
 saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id
 # NOTE: Detected English job descriptions are/were NOT translated

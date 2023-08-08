@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     # Save all descriptions for InfoShield analysis
     descDf["id"] = descDf.index + 1 # create ID to enable tracking in InfoShield
-    descDf.to_csv("/home/omarci/masters/MScDissertation/data/all_descriptions.csv")
+    descDf.to_csv("/home/omarci/masters/MScDissertation/data/all_descriptions.csv", encoding='utf-8-sig')
 
     # Join the two based on UID and date
     fullDf = pd.merge(jobDf, descDf, on="uid", how="inner")
@@ -235,8 +235,8 @@ if __name__ == "__main__":
     mergedDf.dropna(subset=["unescapedJobDesc"], inplace=True)
 
     # Save matched results
-    mergedDf.to_csv("/home/omarci/masters/MScDissertation/data/merged_full.csv")
-    unMerged2.to_csv("/home/omarci/masters/MScDissertation/data/unMerged_round2.csv")
+    mergedDf.to_csv("/home/omarci/masters/MScDissertation/data/merged_full.csv", encoding='utf-8-sig')
+    unMerged2.to_csv("/home/omarci/masters/MScDissertation/data/unMerged_round2.csv", encoding='utf-8-sig')
 
     # Further investigation bits:
     # Some values in descDf are "uid" - strange.... -> happened because was collected as string

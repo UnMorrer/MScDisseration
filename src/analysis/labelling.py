@@ -83,7 +83,7 @@ dataTypes = {
     "helpSettingIn": str,
     "socialBenefits": str
 }
-allLabels = pd.read_excel(allLabels, usecols=list(dataTypes.keys()), na_values=["Not specified", "not specified"]).astype(dataTypes)
+allLabels = pd.read_excel(allLabels, usecols=list(dataTypes.keys()), na_values=["Not specified", "not specified"], dtype=dataTypes)
 allJobs = pd.read_csv(allJobs)
 translatedJobs = pd.read_csv(translatedJobs)
 

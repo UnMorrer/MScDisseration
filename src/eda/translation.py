@@ -180,7 +180,7 @@ saveIds = df[df.unescapedJobDesc.str.len() >= 5000].id
 if __name__ == "__main__":
     if detectLang:
         detectionDf[['descLanguage', 'languageProb']] = detectionDf.apply(lambda row: pd.Series(detect_language(row, detector)), axis=1)
-        detectionDf.to_csv(detection_filepath)
+        detectionDf.to_csv(detection_filepath, encoding='utf-8-sig')
 
     if translate:
         # Remove jobs with fewer than 200 or more than 5k characters
@@ -243,7 +243,7 @@ if __name__ == "__main__":
         df = df.merge(translationDf, on=["id"], how="left")
         
         # Save results
-        translationDf.to_csv(translations_filepath)
+        translationDf.to_csv(translations_filepath, encoding='utf-8-sig')
 
     #Join results together
     if joinResults:
@@ -281,6 +281,6 @@ if __name__ == "__main__":
 
         print(f"Number of rows in output: {languageDf.shape[0]}")
         # Save results
-        languageDf.to_csv(merged_translated_data_filepath, encoding='utf-8')
+        languageDf.to_csv(merged_translated_data_filepath, encoding='utf-8-sig')
 
     a = 1

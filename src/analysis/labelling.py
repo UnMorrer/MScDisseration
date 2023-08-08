@@ -95,13 +95,19 @@ translatedJobs = pd.read_csv(translatedJobs)
 
 # Strip letters from ID column in labvelled data
 allLabels["cleanID"] = allLabels.id.map(lambda x: x.rstrip("a b c d e f g h i j k l m n o p q r s t u v w x y z"))
-allJobs["cleanID"] = allJobs.id.astype(str)
+translatedJobs["cleanID"] = translatedJobs.id.astype(str)
 
 # NOTE: Summary of job descriptions that didn't make it to labels.xlsx...
 # 5556 total -> 241 above 5k, 257 below 200 characters -> 5058 translated jobs, all there. Woohoo!
 print(f"Number of labelled jobs: {len(set(allLabels.cleanID))}")
 
-# Labels translated, but not among labels:
+# Labels translated, but not among labels: -> 33
+notTranslated = set(translatedJobs.cleanID) - set(allLabels.cleanID)
+print(f"Extra IDs that need translation: {list(notTranslated)}")
+extraLabels = translatedJobs[translatedJobs.cleanID.isin(notTranslated)]
+# extraLabels.to_csv("/home/omarci/masters/MScDissertation/data/extra_labels.csv")
 
-
+# 2 extra labels in labels.xlsx that were not translated... (high character count)
+# 3025, 5984
+extraLabelled = set(allLabels.cleanID) - set(translatedJobs.cleanID)
 a = 1

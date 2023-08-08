@@ -255,8 +255,8 @@ if __name__ == "__main__":
         languageDf = df.merge(detectionDf[["id", "descLanguage", "languageProb"]], on=["id"], how="left")
 
         # Drop short and long texts from output
-        longTexts = df[df.unescapedJobDesc.str.len() >= 5000].id # 205
-        shortTexts = df[df.unescapedJobDesc.str.len() <= 200].id # 165
+        longTexts = df[df.unescapedJobDesc.str.len() >= 5000].id # 241
+        shortTexts = df[df.unescapedJobDesc.str.len() <= 200].id # 257
         languageDf = languageDf[~(languageDf.id.isin(longTexts) | languageDf.id.isin(shortTexts))]
 
         # Summary stats about language

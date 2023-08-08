@@ -3,33 +3,11 @@
 # adjusted rand index???
 # TODO: Change female and male to gender neutral (reflects reality more...)
 
-# NOTE: Summary of job descriptions that didn't make it to labels.xlsx...
-# 5556 total -> 239 above 5k, 257 below 200 characters -> 5060 translated jobs, all there. Woohoo!
-
 # Other than InfoShield, do I have other clustering methods available?
 import pandas as pd
 
 translatedDf = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_translated_full.csv")
 descDf = pd.read_csv("/home/omarci/masters/MScDissertation/data/all_descriptions_translated_full.csv")
-
-# InfoShield - 3 interesting clustering methods
-# 1 -> unescaped text, all job adverts
-infoshield1full = pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/all_descriptions_translated_full_full_LSH_labels.csv")
-# 287 + 1 clusters
-# 4424 not assigned to cluster
-
-# 2 -> unescaped text, selected job adverts
-infoshield2full = pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/selected_descriptions_full_LSH_labels.csv")
-# 214 + 1 clusters
-# 3466 not assigned to cluster
-
-# 3 -> translated text, selected job adverts
-infoshield3full = pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/translated_descriptions_full_LSH_labels.csv")
-# 147 + 1 clusters
-# 3716 not assigned to cluster
-
-for df in [infoshield1full, infoshield2full, infoshield3full]:
-    df.drop(columns=["Unnamed: 0.1", "Unnamed: 0"], inplace=True)
 
 # ? not known
 # x good to have
@@ -82,6 +60,7 @@ for df in [infoshield1full, infoshield2full, infoshield3full]:
 # Investigation of job adverts that "did not make it" to manual labnelling stage
 allLabels = "/home/omarci/masters/MScDissertation/data/labels.xlsx"
 allJobs = "/home/omarci/masters/MScDissertation/data/all_descriptions.csv"
+translatedJobs = "/home/omarci/masters/MScDissertation/data/all_descriptions_translated_full.csv"
 dataTypes = {
     "id": str,
     "destCountry": str,
@@ -112,12 +91,17 @@ dataTypes = {
 }
 allLabels = pd.read_excel(allLabels, usecols=list(dataTypes.keys()), na_values=["Not specified", "not specified"]).astype(dataTypes)
 allJobs = pd.read_csv(allJobs)
+translatedJobs = pd.read_csv(translatedJobs)
 
 # Strip letters from ID column in labvelled data
 allLabels["cleanID"] = allLabels.id.map(lambda x: x.rstrip("a b c d e f g h i j k l m n o p q r s t u v w x y z"))
 allJobs["cleanID"] = allJobs.id.astype(str)
 
-# 529 missing
-missingJobs = set(allJobs.cleanID) - set(allLabels.cleanID)
+# NOTE: Summary of job descriptions that didn't make it to labels.xlsx...
+# 5556 total -> 241 above 5k, 257 below 200 characters -> 5058 translated jobs, all there. Woohoo!
+print(f"Number of labelled jobs: {len(set(allLabels.cleanID))}")
+
+# Labels translated, but not among labels:
+
 
 a = 1

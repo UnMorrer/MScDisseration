@@ -120,6 +120,4 @@ allJobs["cleanID"] = allJobs.id.astype(str)
 # 529 missing
 missingJobs = set(allJobs.cleanID) - set(allLabels.cleanID)
 
-# Character count exclusion + look into how these are unescaped
-
 a = 1

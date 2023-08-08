@@ -1,9 +1,3 @@
-# How can I identify significant variables in clustering?
-# Variables that "define" clusters -> low intra-cluster variance and high inter-cluster variance
-# adjusted rand index???
-# TODO: Change female and male to gender neutral (reflects reality more...)
-
-# Other than InfoShield, do I have other clustering methods available?
 import pandas as pd
 
 translatedDf = pd.read_csv("/home/omarci/masters/MScDissertation/data/merged_translated_full.csv")

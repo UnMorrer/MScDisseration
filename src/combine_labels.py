@@ -95,5 +95,6 @@ publishData.to_csv("/home/omarci/masters/MScDissertation/data/public_dataset.csv
 
 # Drop jobs with multiple adverts - 5023 adverts remain
 joinedLabels = joinedLabels[~joinedLabels["id"].str.contains("[a-zA-Z]").fillna(False)]
+joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 
 a = 1

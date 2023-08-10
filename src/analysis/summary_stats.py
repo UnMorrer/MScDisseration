@@ -82,6 +82,7 @@ for colname in ["destCountry", "descLanguage"]:
     # Add thin horizontal grid lines
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Number of adverts")
+    plt.xlim(0, 3000)
     plt.title(plotTitles[colname])
 
     # Prevent x label cut-off
@@ -90,12 +91,12 @@ for colname in ["destCountry", "descLanguage"]:
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/{colname}.png")
 
 categoricalIndicators = [
-    # "industrySector",
+    "industrySector",
     "jobNature",
     "contractType",
-    "workHoursInRange",
-    "wagesInRange",
-    "taxStatus",
+    # "workHoursInRange",
+    # "wagesInRange",
+    # "taxStatus",
     "genderRequirements",
     # "ageRequirements",
     "localLanguageRequirements",
@@ -109,7 +110,7 @@ categoricalIndicators = [
     "urgentDeparture",
     "overtimeOffered",
     "helpSettingIn",
-    "socialBenefits"
+    # "socialBenefits"
 ]
 
 # Indicators - separate df as Hungary and not specified need to be dropped from label data
@@ -117,8 +118,6 @@ categoricalIndicators = [
 # industrySector
 # Age Requirements? -> not show as only a couple exist
 foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])] # 2862 rows
-
-# TODO: How to fill/amend data with "Not Specified"?
 
 catPlots = {
     "industrySector": "Job industry/sector",
@@ -144,26 +143,67 @@ catPlots = {
 }
 
 for colname in categoricalIndicators:
-    value_counts = foreignData[colname].value_counts()
+    value_counts = foreignData[colname].fillna(value="Not specified").value_counts()
     value_counts = value_counts[value_counts >= 10]
 
     # Clear plot area
     plt.clf()
     # Create barplot
-    plot = sns.barplot(x=value_counts.index.str.title(), y=value_counts.values, color="white", edgecolor="black", linewidth=2)
+    plot = sns.barplot(y=value_counts.index.str.title(), x=value_counts.values, color="white", edgecolor="black", linewidth=2)
     # Create distinct bar pattern
     for i, bar in enumerate(plot.patches):
         bar.set_hatch(**next(styles))
     # Add thin horizontal grid lines
-    plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+    plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     # Rotate x axis text
-    plt.xticks(rotation=90)
-    plt.ylabel("Number of adverts")
+    plt.xlim(0, 3000)
+    plt.xlabel("Number of adverts")
     plt.title(catPlots[colname])
 
     # Prevent x label cut-off
     plt.tight_layout()
 
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/{colname}.png")
+
+############################
+# Numeric data
+############################
+
+# Working hours (per week)
+plt.clf()
+sns.stripplot(
+    x=foreignData["workHoursPerWeek"],
+    y=foreignData["jobNature"].fillna("not specified").str.capitalize(),
+    color="gray")
+plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+plt.xlabel("Working hours (per week)")
+plt.ylabel("Job nature")
+plt.title("Working hours by job nature")
+plt.tight_layout()
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHoursPerWeek.png")
+
+# Monthly net wage
+
+
+# Number of indicators present - TODO: Double-check functions
+indicators = {
+    "workingHours": lambda x: x > 40,
+    "wage": lambda x: x > 10000, # TODO: Implement - this will need to be country-specific...
+    "localLanguage": lambda x: x.lower() == "none",
+    "transportToWork": lambda  x: x.lower() == "yes",
+    "accommodationProvided": lambda x: x.lower() == "yes",
+    "sharedAccommodation": lambda x: x.lower() != "no" or x.lower() != "not specified",
+    "wageDeduction": lambda x: x.lower() == "yes",
+    "transferAbroad": lambda x: x.lower() != "no" or x.lower() != "not specified",
+    "previousExperience": lambda x: x.lower() == "no",
+    "helpSettingIn": lambda x: x.lower() == "yes",
+}
+
+# Different kind of plot for numeric data: working hours, wages, number of indicators etc.
+numericIndicators = [
+    "workHoursPerWeek",
+    "monthlyNetWage",
+    "numberOfIndicators"
+]
 
 a = 1

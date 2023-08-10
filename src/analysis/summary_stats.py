@@ -1,5 +1,11 @@
 import pandas as pd
+import matplotlib.pyplot as plt # This import takes ages
+import seaborn as sns
+import numpy as np
+from cycler import cycler
 
+hatch_cycle = (cycler('hatch', ['///', '--', '...','\///', 'xxx', '\\\\']))
+styles = hatch_cycle()
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
 dataTypes = {
     "id": str,
@@ -37,5 +43,54 @@ dataTypes = {
 }
 
 data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + ["date"]), dtype=dataTypes, parse_dates=["date"])
+
+# Interesting summary statistics:
+# Destination country
+# Language
+# Drop Hungary + Not Specified? -> Most likely yes
+# Prevalence of indicators
+
+plotTitles = {
+    "destCountry": "Country of destination",
+    "descLanguage": "Job description language"
+}
+
+for colname in ["destCountry", "descLanguage"]:
+    value_counts = data[colname].value_counts()
+    # Limit to at least 10 ads to reduce clutter. TODO: Mention in text or in appendix
+    value_counts = value_counts[value_counts >= 10]
+
+    # Replace values with more readable ones for language
+    if colname == "descLanguage":
+        value_counts.rename(index={
+            "hu": "Hungarian",
+            "en": "English",
+            "de": "German",
+            "lt": "Lithuanian",
+            "pl": "Polish",
+            "ru": "Russian",
+            "uk": "Ukrainian"
+        }, inplace=True)
+
+    # Clear plot area
+    plt.clf()
+    # Create barplot
+    plot = sns.barplot(x=value_counts.index.str.title(), y=value_counts.values, color="white", edgecolor="black", linewidth=2)
+    # Create distinct bar pattern
+    for i, bar in enumerate(plot.patches):
+        bar.set_hatch(**next(styles))
+    # Add thin horizontal grid lines
+    plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+    # Rotate x axis text
+    plt.xticks(rotation=90)
+    plt.ylabel("Number of adverts")
+    plt.title(plotTitles[colname])
+
+    # Prevent x label cut-off
+    plt.tight_layout()
+
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/{colname}.png")
+
+# Indicators - separate df as Hungary and not specified need to be dropped from label data
 
 a = 1

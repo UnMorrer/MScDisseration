@@ -185,6 +185,7 @@ plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHou
 # Monthly net wage
 
 
+# TODO: Move this elsewhere? 
 # Number of indicators present
 # Countries/observations with wages:
 wageData = foreignData[~foreignData.monthlyWage.isna() | ~foreignData.weeklyWage.isna() | ~foreignData.hourlyWage.isna()]
@@ -224,30 +225,6 @@ minWagePerCountry = {
     },
 }
 
-def indicate_low_wage(row):
-    """
-    Function to check if the hourly wage on
-    offered is below the national minimum
-    wage. 
-
-    Assumptions:
-    If no working hours per week given,
-
-    Inputs:
-    row - pd.Series: Pandas Series containing
-    a full row's worth of data
-
-    Returns:
-    low_wage - bool: Boolean indicator. True
-    if wage offered is below national minimum
-    """
-    # destCountry
-    # workingHours
-    # jobNature - to impute above
-    # contractType
-    pass
-
-
 maxWorkHoursPerCountry = {
     "short-term" : {
         "austria": 60,
@@ -274,7 +251,33 @@ maxWorkHoursPerCountry = {
         "switzerland": 50,
     },
 }
-def indicate_long_hours(row):
+
+def indicate_low_wage(row, countryData = minWagePerCountry):
+    """
+    Function to check if the hourly wage on
+    offered is below the national minimum
+    wage. 
+
+    Assumptions:
+    If no working hours per week given,
+
+    Inputs:
+    row - pd.Series: Pandas Series containing
+    a full row's worth of data
+
+    Returns:
+    low_wage - bool: Boolean indicator. True
+    if wage offered is below national minimum
+    """
+    # destCountry
+    # workingHours
+    # jobNature - to impute above
+    pass
+    # TODO: Convert NET wage to gross wage?
+    # NOTE: Maybe print ID for double-checking...
+
+
+def indicate_long_hours(row, countryData=maxWorkHoursPerCountry):
     """
     Function to check if the weekly
     working hours exceed the national maximum
@@ -282,15 +285,31 @@ def indicate_long_hours(row):
     Inputs:
     row - pd.Series: Pandas Series containing
     a full row's worth of data
+    countryData - dictionary: Dictionary with keys
+    long-term and short-term that contain relevant
+    working hours regulations for countries
 
     Returns:
-    long_hours - bool: Boolean indicator. True
+    longHours - bool: Boolean indicator. True
     if working hours exceed national maximum
     """
-    # destCountry
-    # workingHours
-    # contractType
-    pass
+
+    # Return N/A if working hours not given
+    if row.workHoursPerWeek.isna():
+        return np.nan
+
+    # Check we can analyze country
+    if row.destCountry not in maxWorkHoursPerCountry["short-term"].keys():
+        return np.nan
+
+    # Apply loose criteria if contract duration not specified
+    if row.contractType.isna():
+        contract = "short-term"
+    else:
+        contract = row.contractType
+
+    # Look up criteria
+    return row.workHoursPerWeek > maxWorkHoursPerCountry[contract][row.destCountry]
 
 complexIndicators = {
     "workingHours": lambda row: row, # TODO: Implement - this will need to be country-specific

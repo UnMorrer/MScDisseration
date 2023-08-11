@@ -17,7 +17,7 @@ print(f"Observations not in a cluster: {sum(infoshield2full['LSH label'] == -1)}
 infoshield3full = pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/translated_descriptions_full_LSH_labels.csv")
 print(15 * "-" + "Method 3" + 15 * "-")
 print(f"Number of clusters: {len(infoshield3full['LSH label'].unique())}") # 386 + 1 clusters
-print(f"Observations not in a cluster: {sum(infoshield3full['LSH label'] == -1)}/{infoshield3full.shape[0]}") # 2586 not assigned to cluster
+print(f"Observations not in a cluster: {sum(infoshield3full['LSH label'] == -1)}/{infoshield3full.shape[0]}") # 2586/4214 not assigned to cluster
 
 for df in [infoshield1full, infoshield2full, infoshield3full]:
     df.drop(columns=["Unnamed: 0.1", "Unnamed: 0"], inplace=True)

@@ -76,5 +76,6 @@ emaCompared.to_csv("/home/omarci/masters/MScDissertation/data/ema_compare_labels
 
 # Most due to much better job nature categorization in all/finished labels AND working hours
 marcellCompared.to_csv("/home/omarci/masters/MScDissertation/data/marcell_compare_labels.csv")
+# TODO: Increased quality of data - mention in the dissertation + important for showing contribution
 
 a = 1

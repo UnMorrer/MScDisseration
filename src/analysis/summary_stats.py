@@ -171,7 +171,7 @@ for colname in categoricalIndicators:
 
 # Working hours (per week)
 plt.clf()
-sns.stripplot(
+sns.boxplot(
     x=foreignData["workHoursPerWeek"],
     y=foreignData["jobNature"].fillna("not specified").str.capitalize(),
     color="gray")
@@ -185,10 +185,119 @@ plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHou
 # Monthly net wage
 
 
-# Number of indicators present - TODO: Double-check functions
+# Number of indicators present
+# Countries/observations with wages:
+wageData = foreignData[~foreignData.monthlyWage.isna() | ~foreignData.weeklyWage.isna() | ~foreignData.hourlyWage.isna()]
+print(f"Number of rows with wage data: {wageData.shape[0]}")
+print(f"Countries with wage data: {wageData.destCountry.unique().tolist()}")
+# DE, AT, PL, NL, BE, LT, FI, SE
+
+workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
+print(f"Number of rows with work hours data: {wageData.shape[0]}")
+print(f"Countries with work hours data: {wageData.destCountry.unique().tolist()}")
+
+minWagePerCountry = {
+    # Minimum wage in each country (gross EUR)
+    "hourlyWage" : {
+        "belgium": 11.28,
+        "germany": 12,
+        "lithuania": 4.04,
+        "netherlands": 9.3,
+        "poland": 4.86,
+        "spain": 7.27,
+    },
+    "weeklyWage" : {
+        "belgium": 451.15,
+        "germany": 480,
+        "lithuania": 193.85,
+        "netherlands": 446.4,
+        "poland": 171.75,
+        "spain": 290.77,
+    },
+    "monthlyWage" : {
+        "belgium": 451.15,
+        "germany": 480,
+        "lithuania": 193.85,
+        "netherlands": 446.4,
+        "poland": 171.75,
+        "spain": 290.77,
+    },
+}
+
+def indicate_low_wage(row):
+    """
+    Function to check if the hourly wage on
+    offered is below the national minimum
+    wage. 
+
+    Assumptions:
+    If no working hours per week given,
+
+    Inputs:
+    row - pd.Series: Pandas Series containing
+    a full row's worth of data
+
+    Returns:
+    low_wage - bool: Boolean indicator. True
+    if wage offered is below national minimum
+    """
+    # destCountry
+    # workingHours
+    # jobNature - to impute above
+    # contractType
+    pass
+
+
+maxWorkHoursPerCountry = {
+    "short-term" : {
+        "austria": 60,
+        "belgium": 40,
+        "finland": 40,
+        "germany": 48,
+        "lithuania": 60,
+        "netherlands": 60,
+        "poland": 48,
+        "spain": 40,
+        "sweden": 48,
+        "switzerland": 50,
+    },
+    "long-term" : {
+        "austria": 48,
+        "belgium": 40,
+        "finland": 40,
+        "germany": 48,
+        "lithuania": 48,
+        "netherlands": 48,
+        "poland": 48,
+        "spain": 40,
+        "sweden": 48,
+        "switzerland": 50,
+    },
+}
+def indicate_long_hours(row):
+    """
+    Function to check if the weekly
+    working hours exceed the national maximum
+
+    Inputs:
+    row - pd.Series: Pandas Series containing
+    a full row's worth of data
+
+    Returns:
+    long_hours - bool: Boolean indicator. True
+    if working hours exceed national maximum
+    """
+    # destCountry
+    # workingHours
+    # contractType
+    pass
+
+complexIndicators = {
+    "workingHours": lambda row: row, # TODO: Implement - this will need to be country-specific
+    "wage": lambda row: row, # TODO: Implement - this will need to be country-specific
+}
+
 indicators = {
-    "workingHours": lambda x: x > 40,
-    "wage": lambda x: x > 10000, # TODO: Implement - this will need to be country-specific...
     "localLanguage": lambda x: x.lower() == "none",
     "transportToWork": lambda  x: x.lower() == "yes",
     "accommodationProvided": lambda x: x.lower() == "yes",

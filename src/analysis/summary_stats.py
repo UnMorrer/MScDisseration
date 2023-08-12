@@ -185,7 +185,7 @@ plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHou
 # Monthly net wage
 
 
-# TODO: Move this elsewhere? 
+# TODO: Move indicator calculation elsewhere? 
 # Number of indicators present
 # Countries/observations with wages:
 wageData = foreignData[~foreignData.monthlyWage.isna() | ~foreignData.weeklyWage.isna() | ~foreignData.hourlyWage.isna()]
@@ -197,32 +197,60 @@ workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
 print(f"Number of rows with work hours data: {wageData.shape[0]}")
 print(f"Countries with work hours data: {wageData.destCountry.unique().tolist()}")
 
+# TODO: Move these details to appendix or paper (defo Overleaf)
 minWagePerCountry = {
-    # Minimum wage in each country (gross EUR)
-    "hourlyWage" : {
-        "belgium": 11.28,
-        "germany": 12,
-        "lithuania": 4.04,
-        "netherlands": 9.3,
-        "poland": 4.86,
-        "spain": 7.27,
+    "tax excluded" : {
+        "hourlyWage" : {
+            "belgium": 11.28,
+            "germany": 12,
+            "lithuania": 4.04,
+            "netherlands": 9.3,
+            "poland": 4.86,
+            "spain": 7.27,
+        },
+        "weeklyWage" : {
+            "belgium": 451.15,
+            "germany": 480,
+            "lithuania": 193.85,
+            "netherlands": 446.4,
+            "poland": 171.75,
+            "spain": 290.77,
+        },
+        "monthlyWage" : {
+            "belgium": 451.15,
+            "germany": 480,
+            "lithuania": 193.85,
+            "netherlands": 446.4,
+            "poland": 171.75,
+            "spain": 1080,
+        },
     },
-    "weeklyWage" : {
-        "belgium": 451.15,
-        "germany": 480,
-        "lithuania": 193.85,
-        "netherlands": 446.4,
-        "poland": 171.75,
-        "spain": 290.77,
-    },
-    "monthlyWage" : {
-        "belgium": 451.15,
-        "germany": 480,
-        "lithuania": 193.85,
-        "netherlands": 446.4,
-        "poland": 171.75,
-        "spain": 290.77,
-    },
+    "tax included" : {
+        "hourlyWage" : {
+            "belgium": 7.62,
+            "germany": 8.57,
+            "lithuania": 3.04,
+            "netherlands": 8.53,
+            "poland": 3.79,
+            "spain": 6.81,
+        },
+        "weeklyWage" : {
+            "belgium": 304.62,
+            "germany": 342.92,
+            "lithuania": 146.08,
+            "netherlands": 409.38,
+            "poland": 171.75,
+            "spain": 272.33,
+        },
+        "monthlyWage" : {
+            "belgium": 1320,
+            "germany": 1486,
+            "lithuania": 633,
+            "netherlands": 1774,
+            "poland": 579.92,
+            "spain": 1011.52,
+        },
+    }
 }
 
 maxWorkHoursPerCountry = {

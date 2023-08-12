@@ -402,7 +402,9 @@ for indicator in indicatorFunctions.keys():
 
 # Sum indicators
 joinedLabels["totalIndicators"] = joinedLabels.apply(sum_indicators, axis=1)
-
 joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 
+# Limit to only foreign jobs
+foreignData = joinedLabels[~joinedLabels["destCountry"].isin(["hungary", "not specified"])].copy()
+foreignData.to_csv("/home/omarci/masters/MScDissertation/data/abroad_only_final.csv", na_rep="NA", encoding='utf-8-sig')
 a = 1

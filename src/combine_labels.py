@@ -197,6 +197,19 @@ maxWorkHoursPerCountry = {
 }
 
 
+indicatorCols = {
+    "indWorkingHours": "Working hours above legal limit",
+    "indWage" : "Wage below national minimum",
+    "indLocalLanguage" : "Local language not required",
+    "indTransportToWork" : "Transport to work provided",
+    "indAccommodationProvided" : "Accommodation provided",
+    "indSharedAccommodation" : "Shared accommodation",
+    "indWageDeduction" : "Deduction from wages",
+    "indTransferAbroad" : "Transfer abroad provided",
+    "indNoExperience" : "No prior experience required",
+    "indHelpAdministration" : "Help with administration"
+}
+
 # NOTE: Maybe print ID for double-checking...
 def indicate_low_wage(row, countryData = minWagePerCountry):
     """
@@ -310,7 +323,7 @@ def check_not_equal(value, noRep="no"):
     """
     Function to check if a value is no,
     not specified or null. Will return
-    True for any values that are
+    False for any values that are
 
     Inputs: noRep - str or [str]:
     Representations of no.
@@ -321,23 +334,48 @@ def check_not_equal(value, noRep="no"):
     """
 
     if pd.isnull(value):
-        return True
+        return False
 
     if type(noRep) == str:
-        return value == noRep
+        return not value == noRep
     
-    return value in noRep
+    return not value in noRep
+
+
+def sum_indicators(row, indColNames=indicatorCols.keys()):
+    """
+    Function to sum up job-level
+    indicators.
+
+    Inputs:
+    row - pd.Series: Row representation
+    of the data
+    indColNames - [str]: A list that
+    contains the names (string) of each
+    column that contains boolean indicators
+
+    Returns:
+    total - int: Number of indicator columns
+    with True value
+    """
+
+    total = 0
+    for col in indColNames:
+        if row[col] == True:
+            total += 1
+
+    return total
 
 complexIndicators = {
-    "workingHours": indicate_long_hours,
-    "wage": indicate_low_wage,
+    "WorkingHours": indicate_long_hours,
+    "Wage": indicate_low_wage,
 }
 
 indicatorFunctions = {
     "LocalLanguage": lambda x: check_equal(x, "none"),
     "TransportToWork": lambda  x: check_equal(x, "yes", returnNull=False),
-    "AccommodationProvided": lambda x: check_equal(x, "yes", returnNull=False),
-    "SharedAccommodation": lambda x: check_not_equal(x, noRep=["no", "not specified"]),
+    "AccommodationProvided": lambda x: check_not_equal(x, noRep=["no", "not specified"]),
+    "SharedAccommodation": lambda x: check_equal(x, "yes", returnNull=False),
     "WageDeduction": lambda x: check_equal(x, "yes"),
     "TransferAbroad": lambda x: check_not_equal(x, noRep=["no", "not specified"]),
     "NoExperience": lambda x: check_equal(x, "no"),
@@ -361,6 +399,9 @@ for indicator in complexIndicators.keys():
 
 for indicator in indicatorFunctions.keys():
     joinedLabels["ind"+indicator] = joinedLabels[indicatorColnames[indicator]].apply(indicatorFunctions[indicator])
+
+# Sum indicators
+joinedLabels["totalIndicators"] = joinedLabels.apply(sum_indicators, axis=1)
 
 joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 

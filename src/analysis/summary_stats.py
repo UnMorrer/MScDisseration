@@ -39,10 +39,18 @@ dataTypes = {
     "unescapedJobDesc": str,
     "translatedJobDesc": str,
     "descLanguage": str,
-    "languageProb": float
+    "languageProb": float,
+    "indTransportToWork": bool,
+    "indAccommodationProvided": bool,
+    "indSharedAccommodation": bool,
+    "indTransferAbroad": bool,
+    "indHelpAdministration": bool,
+    "totalIndicators": int,
 }
+# Columns where no data types can be specified
+extraCols = ["date", "indWorkingHours", "indWage", "indLocalLanguage", "indWageDeduction", "indNoExperience"]
 
-data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + ["date"]), dtype=dataTypes, parse_dates=["date"])
+data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes, parse_dates=["date"])
 
 # Interesting summary statistics:
 # Destination country
@@ -117,7 +125,7 @@ categoricalIndicators = [
 # Indicators - variables with MANY more possible labels than others
 # industrySector
 # Age Requirements? -> not show as only a couple exist
-foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])] # 2862 rows
+foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy() # 2862 rows
 
 catPlots = {
     "industrySector": "Job industry/sector",
@@ -149,7 +157,7 @@ for colname in categoricalIndicators:
     # Clear plot area
     plt.clf()
     # Create barplot
-    plot = sns.barplot(y=value_counts.index.str.title(), x=value_counts.values, color="white", edgecolor="black", linewidth=2)
+    plot = sns.barplot(y=value_counts.index.str.title(), x=value_counts.values, color="white", edgecolor="black", linewidth=0.5)
     # Create distinct bar pattern
     for i, bar in enumerate(plot.patches):
         bar.set_hatch(**next(styles))
@@ -182,13 +190,93 @@ plt.title("Working hours by job nature")
 plt.tight_layout()
 plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHoursPerWeek.png")
 
-# Monthly net wage
+############################
+# Indicator data
+############################
+# TODO: Indicator table in Overleaf - based on Cockbain et al.
+# Explain what is derived from where
+indicatorCols = {
+    "indWorkingHours": "Working hours above legal limit",
+    "indWage" : "Wage below national minimum",
+    "indLocalLanguage" : "Local language not required",
+    "indTransportToWork" : "Transport to work provided",
+    "indAccommodationProvided" : "Accommodation provided",
+    "indSharedAccommodation" : "Shared accommodation",
+    "indWageDeduction" : "Deduction from wages",
+    "indTransferAbroad" : "Transfer abroad provided",
+    "indNoExperience" : "No prior experience required",
+    "indHelpAdministration" : "Help with administration"
+}
 
-# Different kind of plot for numeric data: working hours, wages, number of indicators etc.
-numericIndicators = [
-    "workHoursPerWeek",
-    "monthlyNetWage",
-    "numberOfIndicators"
-]
+# Indicator prevalence - Each indicator present in % of job ads
+indicatorPresent = []
+labels = []
+
+for col in indicatorCols.keys():
+    number = sum(foreignData[col] == True)
+    indicatorPresent.append(number)
+    labels.append(indicatorCols[col])
+
+# Clear plot area
+plt.clf()
+# Create barplot
+plot = sns.barplot(y=labels, x=indicatorPresent, color="white", edgecolor="black", linewidth=2)
+# Create distinct bar pattern
+for i, bar in enumerate(plot.patches):
+    bar.set_hatch(**next(styles))
+# Add thin horizontal grid lines
+plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+plt.xlabel("Number of adverts")
+plt.xlim(0, 1000)
+plt.title("Number of jobs containing each indicator")
+# Prevent x label cut-off
+plt.tight_layout()
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorPrevalence.png")
+
+
+
+# Number of indicators in job ads - histogram
+value_counts = foreignData["totalIndicators"].value_counts().sort_index()
+
+# Clear plot area
+plt.clf()
+# Create barplot
+plot = sns.barplot(x=value_counts.index, y=value_counts.values, color="white", edgecolor="black", linewidth=2)
+# Create distinct bar pattern
+for i, bar in enumerate(plot.patches):
+    bar.set_hatch(**next(styles))
+# Add thin horizontal grid lines
+plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+plt.ylabel("Number of adverts")
+plt.xlabel("Number of indicators")
+plt.title("Number of jobs by indicators present")
+
+# Prevent x label cut-off
+plt.tight_layout()
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/totalIndicators.png")
+
+
+# How are each built up? 1 - indicator, 2 indicators etc.
+# Category/Bar: Indicator
+# Colour: Number of indicators in the advert
+# Bar height: Number of adverts
+value_counts = {}
+
+for indicator in indicatorCols.keys():
+    value_counts[indicatorCols[indicator]] = foreignData.groupby("totalIndicators")[indicator].apply(lambda x: sum(x.values == True))
+
+value_counts = pd.DataFrame(value_counts)
+
+plt.clf()
+value_counts.plot(kind="bar")
+
+plt.xlabel("Total indicators")
+plt.ylabel("Number of adverts")
+plt.title("Breakdown by total indicators in advert")
+
+plt.xticks(rotation=0) 
+plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+plt.tight_layout()
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png")
 
 a = 1

@@ -3,6 +3,7 @@
 
 import pandas as pd
 import re
+import numpy as np
 
 labels = "/home/omarci/masters/MScDissertation/data/labels.xlsx"
 translations = "/home/omarci/masters/MScDissertation/data/all_descriptions_translated_full.csv"
@@ -97,13 +98,16 @@ publishData.to_csv("/home/omarci/masters/MScDissertation/data/public_dataset.csv
 # Drop jobs with multiple adverts - 5023 adverts remain
 joinedLabels = joinedLabels[~joinedLabels["id"].str.contains("[a-zA-Z]").fillna(False)]
 
-# Create indicators
+############################
+# Indicators
+############################
+
 # Number of indicators present
 # Countries/observations with wages:
+foreignData = joinedLabels[~joinedLabels["destCountry"].isin(["hungary", "not specified"])] # 2862 rows
 wageData = foreignData[~foreignData.monthlyWage.isna() | ~foreignData.weeklyWage.isna() | ~foreignData.hourlyWage.isna()]
 print(f"Number of rows with wage data: {wageData.shape[0]}")
 print(f"Countries with wage data: {wageData.destCountry.unique().tolist()}")
-# DE, AT, PL, NL, BE, LT, FI, SE
 
 workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
 print(f"Number of rows with work hours data: {wageData.shape[0]}")
@@ -213,25 +217,25 @@ def indicate_low_wage(row, countryData = minWagePerCountry):
     """
     # Return NA for countries with no data
     if row.destCountry not in countryData["tax excluded"]["hourlyWage"].keys():
-        return np.nan
+        return None
 
     # Return N/A for observations with no wage data
-    if row.hourlyWage.isna() and row.weeklyWage.isna() and row.monthlyWage.isna():
-        return np.nan
+    if np.isnan(row.hourlyWage) and np.isnan(row.weeklyWage) and np.isnan(row.monthlyWage):
+        return None
 
     # Use tax status given or gross if N/A (best comparison)
     tax = row.taxStatus
-    if tax.isna():
+    if pd.isnull(tax):
         tax = "tax excluded"
 
     # Best option: Monthly wage, weekly wage - compare direct
-    if not row.monthlyWage.isna():
+    if not np.isnan(row.monthlyWage):
         wage = row.monthlyWage
         return wage < countryData[tax]["monthlyWage"][row.destCountry]
-    if not row.weeklyWage.isna():
+    if not np.isnan(row.weeklyWage):
         wage = row.weeklyWage
         return wage < countryData[tax]["weeklyWage"][row.destCountry]
-    if (not row.hourlyWage.isna()) and (not row.workHoursPerWeek.isna()):
+    if (not np.isnan(row.hourlyWage)) and (not np.isnan(row.workHoursPerWeek)):
         wage = row.hourlyWage * row.workHoursPerWeek
         return wage < countryData[tax]["weeklyWage"][row.destCountry]
 
@@ -257,15 +261,15 @@ def indicate_long_hours(row, countryData=maxWorkHoursPerCountry):
     """
 
     # Return N/A if working hours not given
-    if row.workHoursPerWeek.isna():
-        return np.nan
+    if np.isnan(row.workHoursPerWeek):
+        return None
 
     # Check we can analyze country
     if row.destCountry not in maxWorkHoursPerCountry["short-term"].keys():
-        return np.nan
+        return None
 
     # Apply loose criteria if contract duration not specified
-    if row.contractType.isna():
+    if pd.isnull(row.contractType):
         contract = "short-term"
     else:
         contract = row.contractType
@@ -273,21 +277,90 @@ def indicate_long_hours(row, countryData=maxWorkHoursPerCountry):
     # Look up criteria
     return row.workHoursPerWeek > maxWorkHoursPerCountry[contract][row.destCountry]
 
+
+def check_equal(value, compare, returnNull=None):
+    """
+    Function to safely check whether a value is equal
+    to that specified.
+
+    Inputs:
+    value - str: Value in question.
+    compare - str or [str]: Values to compare
+    against. Multiple values can be given using
+    a list.
+    returnNull - bool: Value returned
+    full null input.
+
+    Returns:
+    result - bool/np.nan: Returns
+    True/False is the value is
+    not null. Otherwise returns null.
+    """
+
+    if pd.isnull(value):
+        return returnNull
+    
+    if type(compare) == str:
+        return value == compare
+    
+    return value in compare
+
+
+def check_not_equal(value, noRep="no"):
+    """
+    Function to check if a value is no,
+    not specified or null. Will return
+    True for any values that are
+
+    Inputs: noRep - str or [str]:
+    Representations of no.
+
+    Returns:
+    Result - bool: Whether the value
+    matches 
+    """
+
+    if pd.isnull(value):
+        return True
+
+    if type(noRep) == str:
+        return value == noRep
+    
+    return value in noRep
+
 complexIndicators = {
     "workingHours": indicate_long_hours,
     "wage": indicate_low_wage,
 }
 
-indicators = {
-    "localLanguage": lambda x: x.lower() == "none",
-    "transportToWork": lambda  x: x.lower() == "yes",
-    "accommodationProvided": lambda x: x.lower() == "yes",
-    "sharedAccommodation": lambda x: x.lower() != "no" or x.lower() != "not specified",
-    "wageDeduction": lambda x: x.lower() == "yes",
-    "transferAbroad": lambda x: x.lower() != "no" or x.lower() != "not specified",
-    "previousExperience": lambda x: x.lower() == "no",
-    "helpSettingIn": lambda x: x.lower() == "yes",
+indicatorFunctions = {
+    "LocalLanguage": lambda x: check_equal(x, "none"),
+    "TransportToWork": lambda  x: check_equal(x, "yes", returnNull=False),
+    "AccommodationProvided": lambda x: check_equal(x, "yes", returnNull=False),
+    "SharedAccommodation": lambda x: check_not_equal(x, noRep=["no", "not specified"]),
+    "WageDeduction": lambda x: check_equal(x, "yes"),
+    "TransferAbroad": lambda x: check_not_equal(x, noRep=["no", "not specified"]),
+    "NoExperience": lambda x: check_equal(x, "no"),
+    "HelpAdministration": lambda x: check_equal(x, "yes", returnNull=False),
 }
+
+indicatorColnames = {
+    "LocalLanguage": "localLanguageRequirements",
+    "TransportToWork": "transportToWorkProvided",
+    "AccommodationProvided": "accommodationProvided",
+    "SharedAccommodation": "sharedAccommodation",
+    "WageDeduction": "deductionFromWages",
+    "TransferAbroad": "transferAbroadProvided",
+    "NoExperience": "previousExperience",
+    "HelpAdministration": "helpSettingIn",
+}
+
+# Create indicators
+for indicator in complexIndicators.keys():
+    joinedLabels["ind"+indicator] = joinedLabels.apply(complexIndicators[indicator], axis=1)
+
+for indicator in indicatorFunctions.keys():
+    joinedLabels["ind"+indicator] = joinedLabels[indicatorColnames[indicator]].apply(indicatorFunctions[indicator])
 
 joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 

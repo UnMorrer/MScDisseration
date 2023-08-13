@@ -50,8 +50,9 @@ data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dat
 for indicator in indicatorList:
     data[indicator] = data[indicator].fillna(0).astype(int).copy()
 
-# NOTE: Before bootstrap - examine if InfoShield is deterministic (in paper)
 # NOTE: For bootstrap purposes, examine using InfoShield-coarse ONLY
+#   YES - full results and coarse results identical
+# NOTE: InfoShield is deterministic - bootstrap the ads present
 ##########################################
 # Evaluation functions
 ##########################################
@@ -107,6 +108,6 @@ for version in range(1, 5, 1):
     print(f"Within-cluster variance: {var.drop(index=-1).sum()} ({var.sum()})")
     print("-"*20)
 
-# TODO: Density plots for cluster-level differences!
+# TODO: Density plots for cluster-level differences
 
 a = 1

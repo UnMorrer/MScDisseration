@@ -28,4 +28,18 @@ print(f"Observations not in a cluster: {sum(infoshield4full['LSH label'] == -1)}
 for df in [infoshield1full, infoshield2full, infoshield3full, infoshield4full]:
     df.drop(columns=["Unnamed: 0"], inplace=True)
 
+##########################################
+# Difference between full vs coarse runs
+##########################################
+
+for version in range(1, 5, 1):
+    coarse = pd.read_csv(f"/home/omarci/masters/MScDissertation/InfoShield/infoshield{version}_LSH_labels.csv")
+    full = pd.read_csv(f"/home/omarci/masters/MScDissertation/InfoShield/infoshield{version}_full_LSH_labels.csv")
+
+    coarse = coarse["LSH label"].values
+    full = full[full["LSH label"] != -1]["LSH label"].values
+
+    print(f"Version {version}")
+    print(f"Coarse labels NOT equal to full labels: {sum(coarse != full)}")
+
 a = 1

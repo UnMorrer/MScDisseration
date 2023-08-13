@@ -3,6 +3,9 @@
 import pandas as pd
 import sklearn
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from cycler import cycler
 
 bootstrap = True # Treu results in significantly more calculations!
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
@@ -44,6 +47,10 @@ indicatorList = [ # Indicators used for analysis etc.
     "indWageDeduction", 
     "indNoExperience"
 ]
+hatch_cycle = (cycler('hatch', ['///', '||', '--', '...','\///', 'xxx', '\\\\']))
+styles = hatch_cycle()
+
+
 data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes, parse_dates=["date"])
 
 # Fill NA with zeros and convert to integers for downstream calculations
@@ -95,19 +102,94 @@ def within_cluster_dispersion(data, usevars=indicatorList, label="LSH label", po
 # Loop evaluation
 ##########################################
 
+def assign_label(value):
+    """
+    Function to assign clusters into groups by size
+    """
+    if value == 2:
+        return '2'
+    elif value == 3:
+        return '3'
+    elif value == 4:
+        return '4'
+    elif value >= 5 and value <= 9:
+        return '5-9'
+    elif value >= 10 and value <= 19:
+        return '10-19'
+    elif value >= 20:
+        return '20+'
+
+labelOrder = ["2", "3", "4", "5-9", "10-19", "20+"]
+
 for version in range(1, 5, 1):
     clusters = f"/home/omarci/masters/MScDissertation/InfoShield/infoshield{version}_full_LSH_labels.csv"
     clusters = pd.read_csv(clusters, usecols=["LSH label", "id"])
     clusters = clusters.merge(data, how="inner", on="id")
+    size = clusters.groupby("LSH label")["totalIndicators"].count().drop(index=-1)
 
     diff = within_cluster_dispersion(clusters, power=1)
     var = within_cluster_dispersion(clusters, power=2)
     print("-"*20)
     print(f"Version {version} \n")
-    print(f"Within-cluster differences: {diff.drop(index=-1).sum()} ({diff.sum()})")
-    print(f"Within-cluster variance: {var.drop(index=-1).sum()} ({var.sum()})")
+    print(f"Within-cluster differences: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
+    print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
     print("-"*20)
 
-# TODO: Density plots for cluster-level differences
+    # Plot histogram of cluster sizes
+    plt.clf()
+    plt.hist(x=size.values, log=True, color="0.85", bins=range(2,max(size.values)+1, 1), edgecolor="black")
+    plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+    # Align plots so they are comparable just by a brief look
+    plt.xlim((1,55))
+    plt.xlabel("Adverts in cluster")
+    plt.ylabel("Number of clusters (log scale)")
+    plt.title(f"Number of clusters and cluster size - Method {version}")
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/clusterSize{version}.png")
+
+    # Plot mean difference/variance (within cluster) by cluster size
+    # Question: Do smaller clusters approximate better?
+    # Groups: 2, 3, 4, 5-9, 10-19, 20+
+    df = size.reset_index().rename(columns={"totalIndicators":"clusterSize"})
+    df["clusterGroup"] = df["clusterSize"].apply(assign_label)
+    df = df.merge(diff.reset_index().rename(columns={"dispersion":"diff"}), on="LSH label", how="inner")
+    df = df.merge(var.reset_index().rename(columns={"dispersion":"var"}), on="LSH label", how="inner")
+    df["avgDiff"] = df["diff"]/df["clusterSize"]
+    df["avgVar"] = df["var"]/df["clusterSize"]
+
+    weighted_mean = lambda x: np.average(x, weights=df.loc[x.index, "clusterSize"])
+
+    varGraph = df.groupby("clusterGroup").agg(weightedMean=("avgVar", weighted_mean))
+    diffGraph = df.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
+
+    # Reorder index
+    diffGraph = diffGraph.loc[labelOrder]
+    varGraph = varGraph.loc[labelOrder]
+
+    # Create graphs for mean difference in cluster
+    plt.clf()
+    plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.index, color="white", edgecolor="black", linewidth=2)
+    for i, bar in enumerate(plot.patches):
+        bar.set_hatch(**next(styles))
+    plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+    plt.xlabel("Cluster size")
+    plt.ylabel("Mean difference")
+    plt.ylim((0, 1)) # Make graphs comparable
+    plt.title(f"Mean difference from centroid by cluster size \nMethod {version}")
+    plt.tight_layout()
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanDiff{version}.png")
+
+    # Create graphs for mean /variance in cluster
+    plt.clf()
+    plot = sns.barplot(y=varGraph.weightedMean, x=varGraph.index, color="white", edgecolor="black", linewidth=2)
+    for i, bar in enumerate(plot.patches):
+        bar.set_hatch(**next(styles))
+    plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+    plt.xlabel("Cluster size")
+    plt.ylabel("Mean variance")
+    plt.ylim((0, 0.5)) # Make graphs comparable
+    plt.title(f"Mean variance from centroid by cluster size \nMethod {version}")
+    plt.tight_layout()
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanVar{version}.png")
+
 
 a = 1

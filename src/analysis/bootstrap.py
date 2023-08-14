@@ -9,10 +9,12 @@
 import pandas as pd
 import utils.infoshieldcoarse as ic
 import utils.calc_cluster_errors as cce
+import os
 
 bootstrapSamples = 100
 labels = [[], [], [], []]
 stats = [[], [], [], []]
+methodTracker = [1, 2, 3, 4]
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
 dataTypes = {
     "id": int,
@@ -49,19 +51,33 @@ for i in range(bootstrapSamples):
     # Sample with replacement from the DataFrame
     sample12 = data.sample(n=len(data), replace=True)
     sample34 = foreignData.sample(n=len(foreignData), replace=True)
-    for label, stat in zip(labels, stats):
+    for label, stat, j in zip(labels, stats, methodTracker):
         # Run clustering on samples
         # Method 1
+        if j < 3:
+            sample = sample12
+        else:
+            sample = sample34
+
         coarse = ic.InfoShieldCoarse(data=sample[["id", "unescapedJobDesc"]], doc_id_header="id", doc_text_header="unescapedJobDesc")
         coarse.clustering()
         # Calculate mean error and mean squared error statistics
-        df = sample.copy(deep=True)
-        df["label"] = coarse1.labels
+        df = sample.copy(deep=True)[indicatorList + ["id"]].fillna(0).astype(int)
+        df["label"] = coarse.labels
+        df["round"] = i
         diff = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=1).drop(index=-1).sum()[0]
         var = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=2).drop(index=-1).sum()[0]
-        stats1.append([diff, var])
-        df["label"] = coarse.labels
-        label.append(df[["id", "label"]])
+        stat.append([diff, var, i])
+        label.append(df[["id", "label", "round"]])
 
-    b = 2
-a = 1
+# Save results - Tested working
+basePath = "/home/omarci/masters/MScDissertation/data/"
+for label, stat, j in zip(labels, stats, methodTracker):
+    df = pd.concat(label, axis=0, ignore_index=True)
+    df.to_csv(f"{basePath}bootstrapLabels_Method{j}.csv", encoding='utf-8-sig')
+
+    statDf = pd.DataFrame(data=stat, columns=["meanError", "meanSqError", "round"])
+    statDf.to_csv(f"{basePath}bootstrapStats_Method{j}.csv", encoding='utf-8-sig')
+
+# Turn off PC when done - NOTE: Maybe remove later
+os.system("shutdown /s /t 60")

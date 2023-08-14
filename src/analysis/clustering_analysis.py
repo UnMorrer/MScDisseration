@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from cycler import cycler
+import utils.calc_cluster_errors as cce
 
 bootstrap = True # Treu results in significantly more calculations!
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
@@ -57,46 +58,6 @@ data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dat
 for indicator in indicatorList:
     data[indicator] = data[indicator].fillna(0).astype(int).copy()
 
-# NOTE: For bootstrap purposes, examine using InfoShield-coarse ONLY
-#   YES - full results and coarse results identical
-# NOTE: InfoShield is deterministic - bootstrap the ads present
-##########################################
-# Evaluation functions
-##########################################
-
-# Cluster homogeneity
-# Within-cluster dispersion matrix from Variance Ratio criterion
-def within_cluster_dispersion(data, usevars=indicatorList, label="LSH label", power=2):
-    """
-    Function to calculate within-cluster dispersion
-    Formula: https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation
-    2.3.11.6 W_k - Within-cluster dispersion
-
-    Inputs:
-    data - pd.DataFrame: Dataframe that contains
-    the data for the analysis
-    usevars - [str]: List of column names
-    in data that are used to calculate dispersion metric
-    label - str: Column name in dataframe that contains
-    label assignment
-    power - int: Controls dispersion metric. Power=2
-    calculates variance while power=1 calculates
-    (raw) differences.
-
-    Returns:
-    dispersion - pd.Series: Series that contains
-    the calculated dispersion for each cluster.
-    Sum up to obtain values for the entire dataset
-    """
-    df = data[usevars+[label]].copy()
-
-    # Calculate centroid locations for each cluster
-    centroids = df.groupby(label).mean()
-
-    # Apply dispersion calculation for each row/observation
-    df["dispersion"] = df.apply(lambda row: np.sum(np.abs(row[usevars] - centroids.loc[row[label]])**power), axis=1)
-
-    return df[[label, "dispersion"]].groupby(label).sum()
 
 ##########################################
 # Loop evaluation
@@ -127,8 +88,8 @@ for version in range(1, 5, 1):
     clusters = clusters.merge(data, how="inner", on="id")
     size = clusters.groupby("LSH label")["totalIndicators"].count().drop(index=-1)
 
-    diff = within_cluster_dispersion(clusters, power=1)
-    var = within_cluster_dispersion(clusters, power=2)
+    diff = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=1)
+    var = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=2)
     print("-"*20)
     print(f"Version {version} \n")
     print(f"Within-cluster differences: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")

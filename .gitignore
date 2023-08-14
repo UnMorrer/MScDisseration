@@ -142,3 +142,6 @@ dmypy.json
 
 # InfoShield output
 /InfoShield
+
+# InfoShield coarse algo
+/src/analysis/utils/infoshieldcoarse.py

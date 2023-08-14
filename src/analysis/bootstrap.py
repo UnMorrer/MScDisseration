@@ -1,4 +1,4 @@
-# TODO: Bootstrap for InfoShield
+# Bootstrap for InfoShield
 # 100 iterations for all 4 methods for starters
 # Infoshield-coarse is perfectly fine
 # Compare variance/difference to original
@@ -11,8 +11,8 @@ import utils.infoshieldcoarse as ic
 import utils.calc_cluster_errors as cce
 
 bootstrapSamples = 100
-fullSamples = []
-foreignSamples = []
+labels = [[], [], [], []]
+stats = [[], [], [], []]
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
 dataTypes = {
     "id": int,
@@ -26,6 +26,18 @@ dataTypes = {
     "indHelpAdministration": bool,
     "totalIndicators": int,
 }
+indicatorList = [ # Indicators used for analysis etc.
+    "indTransportToWork",
+    "indAccommodationProvided",
+    "indSharedAccommodation",
+    "indTransferAbroad",
+    "indHelpAdministration",
+    "indWorkingHours",
+    "indWage", 
+    "indLocalLanguage", 
+    "indWageDeduction", 
+    "indNoExperience"
+]
 # Columns where no data types can be specified
 extraCols = ["indWorkingHours", "indWage", "indLocalLanguage", "indWageDeduction", "indNoExperience"]
 
@@ -33,18 +45,23 @@ data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dat
 foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy()
 
 # Sample IDs
-for _ in range(bootstrapSamples):
+for i in range(bootstrapSamples):
     # Sample with replacement from the DataFrame
-    sample = data.sample(n=len(data), replace=True)
-    fullSamples.append(sample)
-    sample = foreignData.sample(n=len(foreignData), replace=True)
-    foreignSamples.append(sample)
+    sample12 = data.sample(n=len(data), replace=True)
+    sample34 = foreignData.sample(n=len(foreignData), replace=True)
+    for label, stat in zip(labels, stats):
+        # Run clustering on samples
+        # Method 1
+        coarse = ic.InfoShieldCoarse(data=sample[["id", "unescapedJobDesc"]], doc_id_header="id", doc_text_header="unescapedJobDesc")
+        coarse.clustering()
+        # Calculate mean error and mean squared error statistics
+        df = sample.copy(deep=True)
+        df["label"] = coarse1.labels
+        diff = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=1).drop(index=-1).sum()[0]
+        var = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=2).drop(index=-1).sum()[0]
+        stats1.append([diff, var])
+        df["label"] = coarse.labels
+        label.append(df[["id", "label"]])
 
-# Run clustering on samples
-    coarse = ic.InfoShieldCoarse(*sys.argv[1:])
-    coarse.clustering()
-    labels = coarse.labels
-
-# Calculate mean error and mean squared error statistics
-
+    b = 2
 a = 1

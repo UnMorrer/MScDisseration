@@ -172,11 +172,11 @@ for version in range(1, 5, 1):
         bar.set_hatch(**next(styles))
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Cluster size")
-    plt.ylabel("Mean difference")
+    plt.ylabel("Mean error")
     plt.ylim((0, 1)) # Make graphs comparable
-    plt.title(f"Mean difference from centroid by cluster size \nMethod {version}")
+    plt.title(f"Mean error by cluster size \nMethod {version}")
     plt.tight_layout()
-    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanDiff{version}.png")
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanError{version}.png")
 
     # Create graphs for mean /variance in cluster
     plt.clf()
@@ -185,11 +185,11 @@ for version in range(1, 5, 1):
         bar.set_hatch(**next(styles))
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Cluster size")
-    plt.ylabel("Mean variance")
+    plt.ylabel("Mean squared error")
     plt.ylim((0, 0.5)) # Make graphs comparable
-    plt.title(f"Mean variance from centroid by cluster size \nMethod {version}")
+    plt.title(f"Mean squared error by cluster size \nMethod {version}")
     plt.tight_layout()
-    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanVar{version}.png")
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanSqError{version}.png")
 
 
 a = 1

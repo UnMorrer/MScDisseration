@@ -59,7 +59,12 @@ for i in range(bootstrapSamples):
         else:
             sample = sample34
 
-        coarse = ic.InfoShieldCoarse(data=sample[["id", "unescapedJobDesc"]], doc_id_header="id", doc_text_header="unescapedJobDesc")
+        if j % 2 == 0:
+            textCol = "translatedJobDesc"
+        else:
+            textCol = "unescapedJobDesc"
+
+        coarse = ic.InfoShieldCoarse(data=sample[["id", textCol]], doc_id_header="id", doc_text_header=textCol)
         coarse.clustering()
         # Calculate mean error and mean squared error statistics
         df = sample.copy(deep=True)[indicatorList + ["id"]].fillna(0).astype(int)

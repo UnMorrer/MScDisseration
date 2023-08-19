@@ -1,13 +1,16 @@
 # Other than InfoShield, do I have other clustering methods available?
 # NOTE: https://scikit-learn.org/stable/modules/clustering.html - reliable description of many tools + Word doc
 # NOTE: highest possible Mean Aboslute Error is 5 -> 10*0.5 (if cluster centroid is at 0.5)
+# TODO: Is the disagreement (cluster mean abs error) specific to some indicators or is it widespread (within clusters)?
+# TODO: Capture data from last comparison to table in dissertation???
 import pandas as pd
-import sklearn
+from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from cycler import cycler
 import utils.calc_cluster_errors as cce
+import itertools
 
 bootstrap = True # Treu results in significantly more calculations!
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
@@ -52,7 +55,6 @@ indicatorList = [ # Indicators used for analysis etc.
 hatch_cycle = (cycler('hatch', ['///', '||', '--', '...','\///', 'xxx', '\\\\']))
 styles = hatch_cycle()
 
-
 data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes, parse_dates=["date"])
 
 # Fill NA with zeros and convert to integers for downstream calculations
@@ -63,23 +65,6 @@ for indicator in indicatorList:
 ##########################################
 # Loop evaluation
 ##########################################
-
-def assign_label(value):
-    """
-    Function to assign clusters into groups by size
-    """
-    if value == 2:
-        return '2'
-    elif value == 3:
-        return '3'
-    elif value == 4:
-        return '4'
-    elif value >= 5 and value <= 9:
-        return '5-9'
-    elif value >= 10 and value <= 19:
-        return '10-19'
-    elif value >= 20:
-        return '20+'
 
 labelOrder = ["2", "3", "4", "5-9", "10-19", "20+"]
 
@@ -112,7 +97,7 @@ for version in range(1, 5, 1):
     # Question: Do smaller clusters approximate better?
     # Groups: 2, 3, 4, 5-9, 10-19, 20+
     df = size.reset_index().rename(columns={"totalIndicators":"clusterSize"})
-    df["clusterGroup"] = df["clusterSize"].apply(assign_label)
+    df["clusterGroup"] = df["clusterSize"].apply(cce.assign_label)
     df = df.merge(diff.reset_index().rename(columns={"dispersion":"diff"}), on="LSH label", how="inner")
     # df = df.merge(var.reset_index().rename(columns={"dispersion":"var"}), on="LSH label", how="inner")
     df["avgDiff"] = df["diff"]/df["clusterSize"]
@@ -173,8 +158,36 @@ for version in range(1, 5, 1):
 # Compare different methods to each other
 ##########################################
 
-# Adjsuted Rand Index
+# Adjusted Rand Index
 # Adjusted Mutual Information
 # Fowlkes-Mallows Index
+
+clusterResults = {
+    1: pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/infoshield1_full_LSH_labels.csv", usecols=["LSH label", "id"]).sort_values(by="id"),
+    2: pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/infoshield2_full_LSH_labels.csv", usecols=["LSH label", "id"]).sort_values(by="id"),
+    3: pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/infoshield3_full_LSH_labels.csv", usecols=["LSH label", "id"]).sort_values(by="id"),
+    4: pd.read_csv("/home/omarci/masters/MScDissertation/InfoShield/infoshield4_full_LSH_labels.csv", usecols=["LSH label", "id"]).sort_values(by="id"),
+}
+
+for comparison in list(itertools.combinations(clusterResults.keys(), 2)):
+    print("-"*20)
+    print(f"Comparison between method {comparison[0]} and method {comparison[1]}")
+
+    # Align IDs
+    data1 = clusterResults[comparison[0]]
+    data2 = clusterResults[comparison[1]]
+    data = data1.merge(data2, how="inner", on="id", suffixes=(" 1", " 2"))
+    print(f"Number of rows in comparison: {data.shape[0]}")
+    labels1 = data["LSH label 1"].tolist()
+    labels2 = data["LSH label 2"].tolist()
+
+    # Calculate similarity metrics
+    rand = metrics.adjusted_rand_score(labels1, labels2)
+    ami = metrics.adjusted_mutual_info_score(labels1, labels2)
+    fmi = metrics.fowlkes_mallows_score(labels1, labels2)
+
+    print(f"Adjusted rand index: {rand:.5f}")
+    print(f"Adjusted mutual information: {ami:.5f}")
+    print(f"Fowlkes-Mallows index: {fmi:.5f}")
 
 a = 1

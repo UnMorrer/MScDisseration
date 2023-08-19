@@ -38,6 +38,24 @@ def within_cluster_dispersion(data, usevars, label="LSH label", power=1):
 
     return df[[label, "dispersion"]].groupby(label).sum()
 
+def assign_label(value):
+    """
+    Function to assign clusters into groups by size
+    """
+    if value == 2:
+        return '2'
+    elif value == 3:
+        return '3'
+    elif value == 4:
+        return '4'
+    elif value >= 5 and value <= 9:
+        return '5-9'
+    elif value >= 10 and value <= 19:
+        return '10-19'
+    elif value >= 20:
+        return '20+'
+
+
 if __name__ == "__main__":
     # Motivating toy example - max mean error is len(numIndicators)
     data = pd.DataFrame(

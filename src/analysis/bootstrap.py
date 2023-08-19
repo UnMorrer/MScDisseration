@@ -10,6 +10,7 @@ import pandas as pd
 import utils.infoshieldcoarse as ic
 import utils.calc_cluster_errors as cce
 import os
+import numpy as np
 
 bootstrapSamples = 100
 labels = [[], [], [], []]
@@ -42,6 +43,7 @@ indicatorList = [ # Indicators used for analysis etc.
 ]
 # Columns where no data types can be specified
 extraCols = ["indWorkingHours", "indWage", "indLocalLanguage", "indWageDeduction", "indNoExperience"]
+labelOrder = ["2", "3", "4", "5-9", "10-19", "20+"]
 
 data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes)
 foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy()
@@ -70,9 +72,23 @@ for i in range(bootstrapSamples):
         df = sample.copy(deep=True)[indicatorList + ["id"]].fillna(0).astype(int)
         df["label"] = coarse.labels
         df["round"] = i
-        diff = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=1).drop(index=-1).sum()[0]
-        var = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=2).drop(index=-1).sum()[0]
-        stat.append([diff, var, i])
+        diff = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=1)
+        diffSum = diff.drop(index=-1).sum()[0]
+
+        # Calculate mean absolute error for different cluster groups
+        size = df.groupby("label")["id"].count().drop(index=-1)
+
+        df2 = size.reset_index().rename(columns={"id":"clusterSize"})
+        df2["clusterGroup"] = df2["clusterSize"].apply(cce.assign_label)
+        df2 = df2.merge(diff.reset_index().rename(columns={"dispersion":"diff"}), on="label", how="inner")
+        df2["avgDiff"] = df2["diff"]/df2["clusterSize"]
+        weighted_mean = lambda x: np.average(x, weights=df2.loc[x.index, "clusterSize"])
+        diffGraph = df2.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
+
+        # Reorder index
+        diffGraph = diffGraph.loc[labelOrder]
+
+        stat.append([diffSum, *diffGraph.weightedMean.to_list(), i])
         label.append(df[["id", "label", "round"]])
 
 # Save results - Tested working
@@ -81,8 +97,5 @@ for label, stat, j in zip(labels, stats, methodTracker):
     df = pd.concat(label, axis=0, ignore_index=True)
     df.to_csv(f"{basePath}bootstrapLabels_Method{j}.csv", encoding='utf-8-sig')
 
-    statDf = pd.DataFrame(data=stat, columns=["meanError", "meanSqError", "round"])
+    statDf = pd.DataFrame(data=stat, columns=["meanError", *labelOrder, "round"])
     statDf.to_csv(f"{basePath}bootstrapStats_Method{j}.csv", encoding='utf-8-sig')
-
-# Turn off PC when done - NOTE: Maybe remove later
-os.system("shutdown /s /t 60")

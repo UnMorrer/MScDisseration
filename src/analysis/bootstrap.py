@@ -86,10 +86,12 @@ for i in range(bootstrapSamples):
         diffGraph = df2.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
 
         # Reorder index
-        diffGraph = diffGraph.loc[labelOrder]
+        diffGraph = diffGraph.reindex(labelOrder).fillna(0)
 
         stat.append([diffSum, *diffGraph.weightedMean.to_list(), i])
         label.append(df[["id", "label", "round"]])
+
+        print(f"Sample {i} method {j} done")
 
 # Save results - Tested working
 basePath = "/home/omarci/masters/MScDissertation/data/"
@@ -100,4 +102,4 @@ for label, stat, j in zip(labels, stats, methodTracker):
     statDf = pd.DataFrame(data=stat, columns=["meanError", *labelOrder, "round"])
     statDf.to_csv(f"{basePath}bootstrapStats_Method{j}.csv", encoding='utf-8-sig')
 
-b = 167
+b = 1

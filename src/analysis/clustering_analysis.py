@@ -1,5 +1,6 @@
 # Other than InfoShield, do I have other clustering methods available?
 # NOTE: https://scikit-learn.org/stable/modules/clustering.html - reliable description of many tools + Word doc
+# NOTE: highest possible Mean Aboslute Error is 5 -> 10*0.5 (if cluster centroid is at 0.5)
 import pandas as pd
 import sklearn
 import numpy as np
@@ -89,11 +90,11 @@ for version in range(1, 5, 1):
     size = clusters.groupby("LSH label")["totalIndicators"].count().drop(index=-1)
 
     diff = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=1)
-    var = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=2)
+    # var = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=2)
     print("-"*20)
     print(f"Version {version} \n")
     print(f"Within-cluster differences: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
-    print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
+    # print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
     print("-"*20)
 
     # Plot histogram of cluster sizes
@@ -113,18 +114,18 @@ for version in range(1, 5, 1):
     df = size.reset_index().rename(columns={"totalIndicators":"clusterSize"})
     df["clusterGroup"] = df["clusterSize"].apply(assign_label)
     df = df.merge(diff.reset_index().rename(columns={"dispersion":"diff"}), on="LSH label", how="inner")
-    df = df.merge(var.reset_index().rename(columns={"dispersion":"var"}), on="LSH label", how="inner")
+    # df = df.merge(var.reset_index().rename(columns={"dispersion":"var"}), on="LSH label", how="inner")
     df["avgDiff"] = df["diff"]/df["clusterSize"]
-    df["avgVar"] = df["var"]/df["clusterSize"]
+    # df["avgVar"] = df["var"]/df["clusterSize"]
 
     weighted_mean = lambda x: np.average(x, weights=df.loc[x.index, "clusterSize"])
 
-    varGraph = df.groupby("clusterGroup").agg(weightedMean=("avgVar", weighted_mean))
+    # varGraph = df.groupby("clusterGroup").agg(weightedMean=("avgVar", weighted_mean))
     diffGraph = df.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
 
     # Reorder index
     diffGraph = diffGraph.loc[labelOrder]
-    varGraph = varGraph.loc[labelOrder]
+    #varGraph = varGraph.loc[labelOrder]
 
     # Create graphs for mean difference in cluster
     plt.clf()
@@ -139,18 +140,41 @@ for version in range(1, 5, 1):
     plt.tight_layout()
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanError{version}.png")
 
-    # Create graphs for mean /variance in cluster
-    plt.clf()
-    plot = sns.barplot(y=varGraph.weightedMean, x=varGraph.index, color="white", edgecolor="black", linewidth=2)
-    for i, bar in enumerate(plot.patches):
-        bar.set_hatch(**next(styles))
-    plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
-    plt.xlabel("Cluster size")
-    plt.ylabel("Mean squared error")
-    plt.ylim((0, 0.5)) # Make graphs comparable
-    plt.title(f"Mean squared error by cluster size \nMethod {version}")
-    plt.tight_layout()
-    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanSqError{version}.png")
+    ##########################################
+    # Distribution of avgDiff in cluster groups
+    ##########################################
+    for clusterGroup in labelOrder:
+        histGraph = df[df.clusterGroup == clusterGroup].avgDiff
 
+        # Plot histogram of mean error within cluster
+        plt.clf()
+        plt.hist(x=histGraph.values, bins=np.arange(0, 1.5, 0.1),color="0.85", edgecolor="black")
+        plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+        # Align plots so they are comparable just by a brief look
+        plt.xlabel("Mean error for cluster")
+        plt.ylabel("Number of clusters")
+        plt.title(f"Mean error in clusters \n Method {version} | Cluster size {clusterGroup}")
+        plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanErrorHistogram{version}Cluster{clusterGroup}.png")
+
+    # Create graphs for mean /variance in cluster
+    # plt.clf()
+    # plot = sns.barplot(y=varGraph.weightedMean, x=varGraph.index, color="white", edgecolor="black", linewidth=2)
+    # for i, bar in enumerate(plot.patches):
+    #     bar.set_hatch(**next(styles))
+    # plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+    # plt.xlabel("Cluster size")
+    # plt.ylabel("Mean squared error")
+    # plt.ylim((0, 0.5)) # Make graphs comparable
+    # plt.title(f"Mean squared error by cluster size \nMethod {version}")
+    # plt.tight_layout()
+    # plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanSqError{version}.png")
+
+##########################################
+# Compare different methods to each other
+##########################################
+
+# Adjsuted Rand Index
+# Adjusted Mutual Information
+# Fowlkes-Mallows Index
 
 a = 1

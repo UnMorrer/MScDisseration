@@ -37,3 +37,13 @@ def within_cluster_dispersion(data, usevars, label="LSH label", power=1):
     df["dispersion"] = df.apply(lambda row: np.sum(np.abs(row[usevars] - centroids.loc[row[label]])**power), axis=1)
 
     return df[[label, "dispersion"]].groupby(label).sum()
+
+if __name__ == "__main__":
+    # Motivating toy example - max mean error is len(numIndicators)
+    data = pd.DataFrame(
+        data=[[1, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1]],
+        columns=["LSH label", "col1", "col2", "col3", "col4"])
+    # n =1 differences
+    dispersion = within_cluster_dispersion(data, ["col1", "col2", "col3", "col4"])
+
+    a = 1

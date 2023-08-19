@@ -139,7 +139,7 @@ catPlots = {
     "localLanguageRequirements": "Local language proficiency required",
     "transportToWorkProvided": "Transport to workplace organized",
     "accommodationProvided": "Accommodation provided",
-    "accommodationPaidByWorker": "Accommodation paid by", #NOTE: Change Free -> Employer
+    "accommodationPaidByWorker": "Accommodation paid by",
     "sharedAccommodation": "Accommodation in shared rooms",
     "deductionFromWages": "Deduction from wage/salary",
     "transferAbroadProvided": "Help with transfer/relocation abroad provided",
@@ -150,9 +150,16 @@ catPlots = {
     "socialBenefits": "Employee eligible for social security (in destination country)"
 }
 
+# Replace Free -> Employer in accommodation paid by column
+foreignData.replace(to_replace="free", value="employer", inplace=True)
+# Add in line break for labels
+foreignData.replace(to_replace="knowing foreign language is an advantage", value="knowing foreign language\n is an advantage", inplace=True)
+foreignData.replace(to_replace="previous work experience is an advantage", value="previous work experience\n is an advantage", inplace=True)
+
 for colname in categoricalIndicators:
     value_counts = foreignData[colname].fillna(value="Not specified").value_counts()
-    value_counts = value_counts[value_counts >= 10]
+    if colname == "industrySector": # Trim values in big graph
+        value_counts = value_counts[value_counts >= 10]
 
     # Clear plot area
     plt.clf()
@@ -265,18 +272,22 @@ value_counts = {}
 for indicator in indicatorCols.keys():
     value_counts[indicatorCols[indicator]] = foreignData.groupby("totalIndicators")[indicator].apply(lambda x: sum(x.values == True))
 
-value_counts = pd.DataFrame(value_counts)
+value_counts = pd.DataFrame(value_counts).iloc[1: , :]
+# Convert into percentage of adverts
+value_counts = value_counts.div(value_counts.sum(axis=1), axis=0)*100
 
 plt.clf()
 value_counts.plot(kind="bar")
 
-plt.xlabel("Total indicators")
-plt.ylabel("Number of adverts")
+plt.xlabel("Total indicators in advertisement")
+plt.ylabel("Percentage of adverts")
 plt.title("Breakdown by total indicators in advert")
 
-plt.xticks(rotation=0) 
+plt.xticks(rotation=0)
+plt.xlim((0.5, 4.5))
+plt.ylim((0, 50))
 plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
-plt.tight_layout()
-plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png")
+plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png", bbox_inches="tight")
 
 a = 1

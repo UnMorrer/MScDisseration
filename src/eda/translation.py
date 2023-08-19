@@ -76,14 +76,10 @@ def translate_job_deepl(
     # If only 1 string is translated
     return results.text, results.detected_source_lang
 
-    # TODO: Translation is pricey...
+    # Translation is pricey...
     # For everything -> 13.8M characters ~ EUR 280
     # Can do 1st 100 characters from each advert -> Within free tier
     # Discuss options with supervisor
-
-    # Focus INSTEAD - remove duplicate advertisements
-    # Cosine similarity
-    # Clustering with InfoShield - language indep. -> on its way
 
     # APIKey = config["DeepL"]["DEEPL_API_KEY"]
     # translator = deepl.Translator(APIKey)

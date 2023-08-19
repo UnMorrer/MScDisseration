@@ -48,7 +48,6 @@ def main(start_page, url_file_path):
         save.job_details(job_df, append=append_save)
 
         # Load previous job data
-        # TODO: Handle no previous data
         previous_ids = load.load_previous_data(
             os.getcwd() + cfg.save_dir,
             filename_regex=cfg.load_match_regex

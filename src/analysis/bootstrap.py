@@ -99,3 +99,5 @@ for label, stat, j in zip(labels, stats, methodTracker):
 
     statDf = pd.DataFrame(data=stat, columns=["meanError", *labelOrder, "round"])
     statDf.to_csv(f"{basePath}bootstrapStats_Method{j}.csv", encoding='utf-8-sig')
+
+b = 167

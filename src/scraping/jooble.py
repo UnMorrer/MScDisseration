@@ -288,7 +288,7 @@ def get_all_full_job_descriptions(
         if i % 10 == 0:
             logging.info(f"Detailed scraping progress: {i}/{len(urls)}")
 
-        # Skip if it points to external site - TODO
+        # Skip if it points to external site
         if cfg.external_site_url in url:
             logging.info(f"External site encountered during sraping: {url}")
             continue

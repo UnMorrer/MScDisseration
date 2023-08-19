@@ -66,6 +66,3 @@ plt.savefig('figures/cos_sim.png', dpi=300, bbox_inches='tight')
 print(f"NO salary recorded for {sum(df.salary.isna())}/{df.shape[0]} observations")
 print(f"Country breakdown: {df.locationName.value_counts()}")
 # Generic abroad for 1706/4878 countries
-
-# TODO: Figure out a way to visualize the InfoShield results
-# and show them in a meaningful way in the paper

@@ -1,5 +1,5 @@
 # File to combine labels and data, save in a publishable manner/format
-# TODO: Move indicator calculation details to appendix or paper (defo Overleaf)
+# TODO: Move indicator calculation details to appendix of paper (defo Overleaf)
 
 import pandas as pd
 import re
@@ -113,7 +113,7 @@ workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
 print(f"Number of rows with work hours data: {wageData.shape[0]}")
 print(f"Countries with work hours data: {wageData.destCountry.unique().tolist()}")
 
-# TODO: Move these details to appendix or paper (defo Overleaf)
+# TODO: Move these details to appendix of paper (defo Overleaf)
 minWagePerCountry = {
     "tax excluded" : {
         "hourlyWage" : {

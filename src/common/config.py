@@ -13,7 +13,7 @@ data_types = {
     "url": str, # To scrape job description
     "isUrlHiddenFromCrawler": bool,
     "dateCaption": str, # When was entry created?
-    "salary": str, # TODO: Convert
+    "salary": str,
     "content": str, # Advert text (first n characters)
     "position": str, # job title
     "isNew": bool, # Interesting stuff
@@ -111,7 +111,7 @@ full_content_data_types = {
     "jobBaseSalaryTimeUnit": str,
 }
 
-job_full_details_column = "jobDescription" # TODO: Used for cleaning later
+job_full_details_column = "jobDescription"
 cleaned_job_full_details_column = "jobDescriptionClean"
 
 # Saving parameters

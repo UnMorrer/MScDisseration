@@ -200,7 +200,6 @@ plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/workHou
 ############################
 # Indicator data
 ############################
-# TODO: Indicator table in Overleaf - based on Cockbain et al.
 # Explain what is derived from where
 indicatorCols = {
     "indWorkingHours": "Working hours above legal limit",
@@ -289,5 +288,3 @@ plt.ylim((0, 50))
 plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
 plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
 plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png", bbox_inches="tight")
-
-a = 1

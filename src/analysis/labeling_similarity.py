@@ -1,5 +1,6 @@
 # Compare 100 labels Me vs Ema#
 # My last ID 3546 - Compare stuff I labelled twice and look for within-myself variance
+# TODO: Cockbain paper - Cohen’s Kappa for nominal variables and Krippendorff Alpha for ratio variables: Evaluation between people!
 
 import pandas as pd
 import numpy as np
@@ -77,5 +78,3 @@ emaCompared.to_csv("/home/omarci/masters/MScDissertation/data/ema_compare_labels
 # Most due to much better job nature categorization in all/finished labels AND working hours
 marcellCompared.to_csv("/home/omarci/masters/MScDissertation/data/marcell_compare_labels.csv")
 # TODO: Increased quality of data - mention in the dissertation + important for showing contribution
-
-a = 1

@@ -3,6 +3,7 @@
 # NOTE: highest possible Mean Aboslute Error is 5 -> 10*0.5 (if cluster centroid is at 0.5)
 # TODO: Is the disagreement (cluster mean abs error) specific to some indicators or is it widespread (within clusters)?
 # TODO: Capture data from last comparison to table in dissertation???
+# TODO: Add confidence intervals for cluster errors (using bootstrap)
 import pandas as pd
 from sklearn import metrics
 import numpy as np

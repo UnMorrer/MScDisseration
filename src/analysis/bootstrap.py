@@ -69,7 +69,7 @@ for i in range(bootstrapSamples):
         coarse = ic.InfoShieldCoarse(data=sample[["id", textCol]], doc_id_header="id", doc_text_header=textCol)
         coarse.clustering()
         # Calculate mean error and mean squared error statistics
-        df = sample.copy(deep=True)[indicatorList + ["id"]].fillna(0).astype(int)
+        df = sample.copy(deep=True)[indicatorList + ["id"]].fillna(0).astype(int).copy()
         df["label"] = coarse.labels
         df["round"] = i
         diff = cce.within_cluster_dispersion(data=df, usevars=indicatorList, label="label", power=1)

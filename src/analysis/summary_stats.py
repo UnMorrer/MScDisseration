@@ -60,12 +60,12 @@ data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dat
 
 plotTitles = {
     "destCountry": "Country of destination",
-    "descLanguage": "Job description language"
+    "descLanguage": "Job description language | all jobs"
 }
 
 for colname in ["destCountry", "descLanguage"]:
     value_counts = data[colname].value_counts()
-    # Limit to at least 10 ads to reduce clutter. TODO: Mention in text or in appendix
+    # Limit to at least 10 ads to reduce clutter.
     value_counts = value_counts[value_counts >= 10]
 
     # Replace values with more readable ones for language
@@ -126,6 +126,39 @@ categoricalIndicators = [
 # industrySector
 # Age Requirements? -> not show as only a couple exist
 foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy() # 2862 rows
+
+### Plot for foreign-only jobs' languages
+value_counts = foreignData["descLanguage"].value_counts()
+# Limit to at least 10 ads to reduce clutter.
+value_counts = value_counts[value_counts >= 10]
+
+# Replace values with more readable ones for language
+if colname == "descLanguage":
+    value_counts.rename(index={
+        "hu": "Hungarian",
+        "en": "English",
+        "de": "German",
+        "lt": "Lithuanian",
+        "pl": "Polish",
+        "ru": "Russian",
+        "uk": "Ukrainian"
+    }, inplace=True)
+# Clear plot area
+plt.clf()
+# Create barplot
+plot = sns.barplot(y=value_counts.index.str.title(), x=value_counts.values, color="white", edgecolor="black", linewidth=2)
+# Create distinct bar pattern
+for i, bar in enumerate(plot.patches):
+    bar.set_hatch(**next(styles))
+# Add thin horizontal grid lines
+plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+plt.xlabel("Number of adverts")
+plt.xlim(0, 1500)
+plt.title("Job description language | foreign jobs")
+
+# Prevent x label cut-off
+plt.tight_layout()
+plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/{colname}Foreign.png")
 
 catPlots = {
     "industrySector": "Job industry/sector",
@@ -288,3 +321,5 @@ plt.ylim((0, 50))
 plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
 plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
 plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png", bbox_inches="tight")
+
+a = 1

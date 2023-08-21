@@ -89,6 +89,7 @@ def calculate_grouped_results(size, differences, labelName="LSH label", labelOrd
 
     # Reorder index
     diffGraph = diffGraph.loc[labelOrder]
+    diffGraph = diffGraph.reset_index()
 
     return diffGraph
 

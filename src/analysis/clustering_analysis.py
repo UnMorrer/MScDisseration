@@ -1,9 +1,7 @@
 # Other than InfoShield, do I have other clustering methods available?
 # NOTE: https://scikit-learn.org/stable/modules/clustering.html - reliable description of many tools + Word doc
 # NOTE: highest possible Mean Aboslute Error is 5 -> 10*0.5 (if cluster centroid is at 0.5)
-# TODO: Is the disagreement (cluster mean abs error) specific to some indicators or is it widespread (within clusters)?
 # TODO: Capture data from last comparison to table in dissertation???
-# TODO: Add confidence intervals for cluster errors (using bootstrap)
 import pandas as pd
 from sklearn import metrics
 import numpy as np
@@ -66,11 +64,24 @@ for indicator in indicatorList:
 ##########################################
 # Loop evaluation
 ##########################################
-
 labelOrder = ["2", "3", "4", "5-9", "10-19", "20+"]
+indicatorCols = {
+    "indWorkingHours": "Working hours above legal limit",
+    "indWage" : "Wage below national minimum",
+    "indLocalLanguage" : "Local language not required",
+    "indTransportToWork" : "Transport to work provided",
+    "indAccommodationProvided" : "Accommodation provided",
+    "indSharedAccommodation" : "Shared accommodation",
+    "indWageDeduction" : "Deduction from wages",
+    "indTransferAbroad" : "Transfer abroad provided",
+    "indNoExperience" : "No prior experience required",
+    "indHelpAdministration" : "Help with administration"
+}
 
 for version in range(1, 5, 1):
     clusters = f"/home/omarci/masters/MScDissertation/InfoShield/infoshield{version}_full_LSH_labels.csv"
+    bootstrap = f"/home/omarci/masters/MScDissertation/data/bootstrapStats_Method{version}.csv"
+    bootstrap = pd.read_csv(bootstrap)
     clusters = pd.read_csv(clusters, usecols=["LSH label", "id"])
     clusters = clusters.merge(data, how="inner", on="id")
     size = clusters.groupby("LSH label")["totalIndicators"].count().drop(index=-1)
@@ -79,7 +90,7 @@ for version in range(1, 5, 1):
     # var = cce.within_cluster_dispersion(data=clusters, usevars=indicatorList, label="LSH label", power=2)
     print("-"*20)
     print(f"Version {version} \n")
-    print(f"Within-cluster differences: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
+    print(f"Mean absolute error for all clusters: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
     # print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
     print("-"*20)
 
@@ -97,25 +108,18 @@ for version in range(1, 5, 1):
     # Plot mean difference/variance (within cluster) by cluster size
     # Question: Do smaller clusters approximate better?
     # Groups: 2, 3, 4, 5-9, 10-19, 20+
-    df = size.reset_index().rename(columns={"totalIndicators":"clusterSize"})
-    df["clusterGroup"] = df["clusterSize"].apply(cce.assign_label)
-    df = df.merge(diff.reset_index().rename(columns={"dispersion":"diff"}), on="LSH label", how="inner")
-    # df = df.merge(var.reset_index().rename(columns={"dispersion":"var"}), on="LSH label", how="inner")
-    df["avgDiff"] = df["diff"]/df["clusterSize"]
-    # df["avgVar"] = df["var"]/df["clusterSize"]
+    diffGraph = cce.calculate_grouped_results(size.reset_index().rename(columns={"totalIndicators":"clusterSize"}), diff)
 
-    weighted_mean = lambda x: np.average(x, weights=df.loc[x.index, "clusterSize"])
-
-    # varGraph = df.groupby("clusterGroup").agg(weightedMean=("avgVar", weighted_mean))
-    diffGraph = df.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
-
-    # Reorder index
-    diffGraph = diffGraph.loc[labelOrder]
-    #varGraph = varGraph.loc[labelOrder]
+    # Get 95% CI using 5 - 95th largest bootstrap estimates
+    # ci = bootstrap.quantile([0.05, 0.95], axis=0)
+    # lower = ci.iloc[0, :][["2", "3", "4", "5-9", "10-19", "20+"]].to_numpy()
+    # upper = ci.iloc[1, :][["2", "3", "4", "5-9", "10-19", "20+"]].to_numpy()
+    # lowerError = (diffGraph.to_numpy()[:, 0] - lower).clip(0)
+    # upperError = (upper - diffGraph.to_numpy()[:, 0]).clip(0)
 
     # Create graphs for mean difference in cluster
     plt.clf()
-    plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.index, color="white", edgecolor="black", linewidth=2)
+    plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.index, color="white", edgecolor="black", linewidth=2)#, yerr=[lowerError, upperError])
     for i, bar in enumerate(plot.patches):
         bar.set_hatch(**next(styles))
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
@@ -126,11 +130,43 @@ for version in range(1, 5, 1):
     plt.tight_layout()
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanError{version}.png")
 
+    # Mean absolute error calculation per indicator per clusterGroup
+    clusterBreakdown = []
+    for indicator in indicatorList:
+        result = cce.within_cluster_dispersion(data=clusters, usevars=[indicator], label="LSH label", power=1)
+        groupedResult = cce.calculate_grouped_results(size.reset_index().rename(columns={"totalIndicators":"clusterSize"}), result)
+        clusterBreakdown.append([version, indicator, *groupedResult.weightedMean.to_list()])
+    
+    clusterBreakdown = pd.DataFrame(data=clusterBreakdown, columns=["method", "indicatorName", *labelOrder])
+    # Convert to percentages + stacked barplot
+    percentages = clusterBreakdown[labelOrder].div(clusterBreakdown[labelOrder].sum(axis=0), axis=1)*100
+    percentages.set_index(clusterBreakdown.indicatorName, inplace=True)
+
+    plt.clf()
+    fig, ax = plt.subplots()
+    bottom = np.zeros(len(labelOrder))
+
+    for row in percentages.iterrows():
+        p = ax.bar(
+            labelOrder,
+            row[1].to_numpy(),
+            label=indicatorCols[row[0]],
+            bottom=bottom)
+        bottom += row[1].to_numpy()
+
+    ax.set_title("Breakdown of mean absolute error \n by indicator and cluster group")
+    plt.ylabel("Percentage of cluster-level errors")
+    plt.xlabel("Cluster size")
+    # ax.legend(loc="upper right")
+    plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
+    plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
+    plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/errorBreakdown{version}.png", bbox_inches="tight")
+
     ##########################################
     # Distribution of avgDiff in cluster groups
     ##########################################
     for clusterGroup in labelOrder:
-        histGraph = df[df.clusterGroup == clusterGroup].avgDiff
+        histGraph = diffGraph[diffGraph.clusterGroup == clusterGroup].weightedMean
 
         # Plot histogram of mean error within cluster
         plt.clf()

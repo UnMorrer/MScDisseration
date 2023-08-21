@@ -56,6 +56,42 @@ def assign_label(value):
         return '20+'
 
 
+def calculate_grouped_results(size, differences, labelName="LSH label", labelOrder=["2", "3", "4", "5-9", "10-19", "20+"]):
+    """
+    Function to group mean abs error calculated by
+    within_cluster_dispersion into clusters by
+    cluster size
+
+    Inputs:
+    size - pd.DataFrame with columns 'labelName' and
+    'clusterSize' which desribes how many observations
+    there are within each cluster.
+    (-1 cluster can be dropped as it's not part of analysis)
+    differences - pd.Dataframe with columns 'labelName' and
+    'dispersion' (corresponds to standard output of 
+    function above)
+    labelOrder - [str]: How to order clustering groups
+    returned by assign_label function (above)
+
+    Returns:
+    diffGraph - pd.DataFrame with rows as entries and columns
+    'avgDiff', 'clusterGroup' and 'clusterSize' that contain
+    the data required for graphing
+    """
+    df = size.copy(deep=True)
+    df["clusterGroup"] = df["clusterSize"].apply(assign_label)
+    df = df.merge(differences.reset_index().rename(columns={"dispersion":"diff"}), on=labelName, how="inner")
+    df["avgDiff"] = df["diff"]/df["clusterSize"]
+
+    weighted_mean = lambda x: np.average(x, weights=df.loc[x.index, "clusterSize"])
+
+    diffGraph = df.groupby("clusterGroup").agg(weightedMean=("avgDiff", weighted_mean))
+
+    # Reorder index
+    diffGraph = diffGraph.loc[labelOrder]
+
+    return diffGraph
+
 if __name__ == "__main__":
     # Motivating toy example - max mean error is len(numIndicators)
     data = pd.DataFrame(

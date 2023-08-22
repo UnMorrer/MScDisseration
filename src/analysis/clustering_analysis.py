@@ -11,7 +11,6 @@ from cycler import cycler
 import utils.calc_cluster_errors as cce
 import itertools
 
-bootstrap = True # Treu results in significantly more calculations!
 data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
 clusters = "/home/omarci/masters/MScDissertation/InfoShield/infoshield1_full_LSH_labels.csv"
 dataTypes = {

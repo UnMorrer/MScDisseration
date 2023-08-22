@@ -191,8 +191,13 @@ foreignData.replace(to_replace="previous work experience is an advantage", value
 
 for colname in categoricalIndicators:
     value_counts = foreignData[colname].fillna(value="Not specified").value_counts()
+    xlimit = 3000
     if colname == "industrySector": # Trim values in big graph
         value_counts = value_counts[value_counts >= 10]
+        xlimit = 1000
+
+    if colname == "jobNature":
+        xlimit = 1250
 
     # Clear plot area
     plt.clf()
@@ -204,7 +209,7 @@ for colname in categoricalIndicators:
     # Add thin horizontal grid lines
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     # Rotate x axis text
-    plt.xlim(0, 3000)
+    plt.xlim(0, xlimit)
     plt.xlabel("Number of adverts")
     plt.title(catPlots[colname])
 
@@ -256,10 +261,15 @@ for col in indicatorCols.keys():
     indicatorPresent.append(number)
     labels.append(indicatorCols[col])
 
+indicatorPlot = pd.DataFrame(data={
+    "indicatorName": labels,
+    "number": indicatorPresent
+}).sort_values(by="number", ascending=False)
+
 # Clear plot area
 plt.clf()
 # Create barplot
-plot = sns.barplot(y=labels, x=indicatorPresent, color="white", edgecolor="black", linewidth=2)
+plot = sns.barplot(y=indicatorPlot.indicatorName, x=indicatorPlot.number, color="white", edgecolor="black", linewidth=2)
 # Create distinct bar pattern
 for i, bar in enumerate(plot.patches):
     bar.set_hatch(**next(styles))
@@ -267,7 +277,7 @@ for i, bar in enumerate(plot.patches):
 plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
 plt.xlabel("Number of adverts")
 plt.xlim(0, 1000)
-plt.title("Number of jobs containing each indicator")
+plt.title("Number of adverts containing each indicator")
 # Prevent x label cut-off
 plt.tight_layout()
 plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorPrevalence.png")
@@ -288,7 +298,7 @@ for i, bar in enumerate(plot.patches):
 plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
 plt.ylabel("Number of adverts")
 plt.xlabel("Number of indicators")
-plt.title("Number of jobs by indicators present")
+plt.title("Number of jobs by number of indicators present")
 
 # Prevent x label cut-off
 plt.tight_layout()
@@ -306,7 +316,8 @@ for indicator in indicatorCols.keys():
 
 value_counts = pd.DataFrame(value_counts).iloc[1: , :]
 # Convert into percentage of adverts
-value_counts = value_counts.div(value_counts.sum(axis=1), axis=0)*100
+value_counts = value_counts.div(value_counts.sum(axis=1), axis=0).T*np.array([1, 2, 3, 4, 5])*100
+value_counts = value_counts.T
 
 plt.clf()
 value_counts.plot(kind="bar")
@@ -316,10 +327,17 @@ plt.ylabel("Percentage of adverts")
 plt.title("Breakdown by total indicators in advert")
 
 plt.xticks(rotation=0)
-plt.xlim((0.5, 4.5))
-plt.ylim((0, 50))
+plt.xlim((-0.5, 4.5))
+plt.ylim((0, 100))
 plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
 plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
 plt.savefig(f"/home/omarci/masters/MScDissertation/figures/summary_stats/indicatorBreakdown.png", bbox_inches="tight")
 
+# Indicator math - indicator section of the paper
+oneIndicator = foreignData[foreignData.totalIndicators == 1][indicatorCols.keys()].copy()
+oneIndicator.fillna(0).sum(axis=0)
+
+accommodationProvided = foreignData[foreignData.accommodationProvided == "yes"].copy()
+accommodationProvided.accommodationPaidByWorker.value_counts()
+accommodationProvided.sharedAccommodation.value_counts()
 a = 1

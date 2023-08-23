@@ -90,6 +90,8 @@ for version in range(1, 5, 1):
     print("-"*20)
     print(f"Version {version} \n")
     print(f"Mean absolute error for all clusters: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
+    print(f"Number of cluster for method {version}: {len(clusters['LSH label'].unique()) - 1 }")
+    print(f"Number of ads within clusters: {clusters[clusters['LSH label'] != -1].shape[0]}")
     # print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
     print("-"*20)
 

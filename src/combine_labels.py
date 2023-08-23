@@ -110,8 +110,8 @@ print(f"Number of rows with wage data: {wageData.shape[0]}")
 print(f"Countries with wage data: {wageData.destCountry.unique().tolist()}")
 
 workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
-print(f"Number of rows with work hours data: {wageData.shape[0]}")
-print(f"Countries with work hours data: {wageData.destCountry.unique().tolist()}")
+print(f"Number of rows with work hours data: {workHoursData.shape[0]}")
+print(f"Countries with work hours data: {workHoursData.destCountry.unique().tolist()}")
 
 minWagePerCountry = {
     "tax excluded" : {
@@ -400,6 +400,7 @@ for indicator in indicatorFunctions.keys():
 
 # Sum indicators
 joinedLabels["totalIndicators"] = joinedLabels.apply(sum_indicators, axis=1)
+joinedLabels = joinedLabels.drop_duplicates(subset="id")
 joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 
 # Limit to only foreign jobs

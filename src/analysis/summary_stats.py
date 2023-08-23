@@ -339,5 +339,6 @@ oneIndicator.fillna(0).sum(axis=0)
 
 accommodationProvided = foreignData[foreignData.accommodationProvided == "yes"].copy()
 accommodationProvided.accommodationPaidByWorker.value_counts()
+accommodationProvided.deductionFromWages.value_counts()
 accommodationProvided.sharedAccommodation.value_counts()
 a = 1

@@ -113,7 +113,6 @@ workHoursData = foreignData[~foreignData.workHoursPerWeek.isna()]
 print(f"Number of rows with work hours data: {wageData.shape[0]}")
 print(f"Countries with work hours data: {wageData.destCountry.unique().tolist()}")
 
-# TODO: Move these details to appendix of paper (defo Overleaf)
 minWagePerCountry = {
     "tax excluded" : {
         "hourlyWage" : {
@@ -195,7 +194,6 @@ maxWorkHoursPerCountry = {
         "switzerland": 50,
     },
 }
-
 
 indicatorCols = {
     "indWorkingHours": "Working hours above legal limit",
@@ -407,3 +405,5 @@ joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv
 # Limit to only foreign jobs
 foreignData = joinedLabels[~joinedLabels["destCountry"].isin(["hungary", "not specified"])].copy()
 foreignData.to_csv("/home/omarci/masters/MScDissertation/data/abroad_only_final.csv", na_rep="NA", encoding='utf-8-sig')
+
+a = 1

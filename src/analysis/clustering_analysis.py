@@ -226,4 +226,17 @@ for comparison in list(itertools.combinations(clusterResults.keys(), 2)):
     print(f"Adjusted mutual information: {ami:.5f}")
     print(f"Fowlkes-Mallows index: {fmi:.5f}")
 
+# Example clusters
+data = "/home/omarci/masters/MScDissertation/data/final_dataset.csv"
+data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes, parse_dates=["date"])
+clusters = f"/home/omarci/masters/MScDissertation/InfoShield/infoshield2_full_LSH_labels.csv"
+clusters = pd.read_csv(clusters, usecols=["LSH label", "id"])
+clusters = clusters.merge(data, how="inner", on="id")
+
+# Small adverts in cluster
+clusters = clusters[clusters["LSH label"] != -1].copy()
+smallAds = clusters[clusters.translatedJobDesc.str.len() <= 400]
+smallAds["LSH label"].value_counts()
+examples = smallAds[smallAds["LSH label"] == 65].id.values
+# ID 73, 1064 will be included
 a = 1

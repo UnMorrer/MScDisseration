@@ -104,7 +104,8 @@ joinedLabels = joinedLabels[~joinedLabels["id"].str.contains("[a-zA-Z]").fillna(
 
 # Number of indicators present
 # Countries/observations with wages:
-foreignData = joinedLabels[~joinedLabels["destCountry"].isin(["hungary", "not specified"])] # 2862 rows
+foreignData = (joinedLabels["destCountry"] == "hungary") | (joinedLabels["destCountry"].isna())
+foreignData = joinedLabels[~foreignData] # 1,811 rows
 wageData = foreignData[~foreignData.monthlyWage.isna() | ~foreignData.weeklyWage.isna() | ~foreignData.hourlyWage.isna()]
 print(f"Number of rows with wage data: {wageData.shape[0]}")
 print(f"Countries with wage data: {wageData.destCountry.unique().tolist()}")
@@ -404,7 +405,8 @@ joinedLabels = joinedLabels.drop_duplicates(subset="id")
 joinedLabels.to_csv("/home/omarci/masters/MScDissertation/data/final_dataset.csv", na_rep="NA", encoding='utf-8-sig')
 
 # Limit to only foreign jobs
-foreignData = joinedLabels[~joinedLabels["destCountry"].isin(["hungary", "not specified"])].copy()
+foreignData = (joinedLabels["destCountry"] == "hungary") | (joinedLabels["destCountry"].isna())
+foreignData = joinedLabels[~foreignData].drop_duplicates(subset="id").copy()
 foreignData.to_csv("/home/omarci/masters/MScDissertation/data/abroad_only_final.csv", na_rep="NA", encoding='utf-8-sig')
 
 a = 1

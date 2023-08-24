@@ -125,7 +125,8 @@ categoricalIndicators = [
 # Indicators - variables with MANY more possible labels than others
 # industrySector
 # Age Requirements? -> not show as only a couple exist
-foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy() # 2862 rows
+foreignData = (data["destCountry"] == "hungary") | (data["destCountry"].isna())
+foreignData = data[~foreignData].copy() # 1811 rows
 
 ### Plot for foreign-only jobs' languages
 value_counts = foreignData["descLanguage"].value_counts()

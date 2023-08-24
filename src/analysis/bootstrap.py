@@ -46,7 +46,8 @@ extraCols = ["indWorkingHours", "indWage", "indLocalLanguage", "indWageDeduction
 labelOrder = ["2", "3", "4", "5-9", "10-19", "20+"]
 
 data = pd.read_csv(data, usecols=(list(dataTypes.keys()) + extraCols), dtype=dataTypes)
-foreignData = data[~data["destCountry"].isin(["hungary", "not specified"])].copy()
+foreignData = (data["destCountry"] == "hungary") | (data["destCountry"].isna())
+foreignData = data[~foreignData].copy() # 1811 rows
 
 # Sample IDs
 for i in range(bootstrapSamples):

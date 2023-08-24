@@ -90,10 +90,10 @@ for version in range(1, 5, 1):
     print("-"*20)
     print(f"Version {version} \n")
     print(f"Mean absolute error for all clusters: {diff.drop(index=-1).sum()[0]} ({diff.sum()[0]})")
-    print(f"Number of cluster for method {version}: {len(clusters['LSH label'].unique()) - 1 }")
+    numClusters = len(clusters['LSH label'].unique()) - 1
+    print(f"Number of cluster for method {version}: {numClusters}")
     print(f"Number of ads within clusters: {clusters[clusters['LSH label'] != -1].shape[0]}")
     # print(f"Within-cluster variance: {var.drop(index=-1).sum()[0]} ({var.sum()[0]})")
-    print("-"*20)
 
     # Plot histogram of cluster sizes
     plt.clf()
@@ -105,6 +105,8 @@ for version in range(1, 5, 1):
     plt.ylabel("Number of clusters (log scale)")
     plt.title(f"Number of clusters and cluster size - Method {version}")
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/clusterSize{version}.png")
+    twoObservations = size.value_counts().iloc[0]
+    print(f"Number of clusters with size 2 for method {version}: {twoObservations} ({twoObservations / numClusters * 100}%)")
 
     # Plot mean difference/variance (within cluster) by cluster size
     # Question: Do smaller clusters approximate better?
@@ -119,15 +121,18 @@ for version in range(1, 5, 1):
     # upperError = (upper - diffGraph.to_numpy()[:, 0]).clip(0)
 
     # Create graphs for mean difference in cluster
+    print(f"Mean abs error for cluster size 20+: {diffGraph.weightedMean.iloc[5]:.3f}")
+    print(f"Mean abs error for cluster size 10-19: {diffGraph.weightedMean.iloc[4]:.3f}")
+    print(f"Mean abs error for cluster size 5-9: {diffGraph.weightedMean.iloc[3]:.3f}")
     plt.clf()
-    plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.index, color="white", edgecolor="black", linewidth=2)#, yerr=[lowerError, upperError])
+    plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.clusterGroup, color="white", edgecolor="black", linewidth=2)#, yerr=[lowerError, upperError])
     for i, bar in enumerate(plot.patches):
         bar.set_hatch(**next(styles))
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Cluster size")
-    plt.ylabel("Mean error")
+    plt.ylabel("Mean abs error per advert")
     plt.ylim((0, 1)) # Make graphs comparable
-    plt.title(f"Mean error by cluster size \nMethod {version}")
+    plt.title(f"Mean absolute error by cluster size \nMethod {version}")
     plt.tight_layout()
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanError{version}.png")
 
@@ -155,42 +160,34 @@ for version in range(1, 5, 1):
             bottom=bottom)
         bottom += row[1].to_numpy()
 
-    ax.set_title("Breakdown of mean absolute error \n by indicator and cluster group")
+    ax.set_title(f"Breakdown of mean absolute error \n  Method {version}")
     plt.ylabel("Percentage of cluster-level errors")
     plt.xlabel("Cluster size")
     # ax.legend(loc="upper right")
-    plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left")
+    # plt.legend(bbox_to_anchor=(1, 0.40), loc="lower left") - moved to separate picture
     plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
     plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/errorBreakdown{version}.png", bbox_inches="tight")
 
     ##########################################
     # Distribution of avgDiff in cluster groups
     ##########################################
+    histGraph = diff.merge(size, on="LSH label").rename(columns={"totalIndicators": "clusterSize"})
+    histGraph["clusterGroup"] = histGraph.clusterSize.apply(cce.assign_label)
+    histGraph["error"] = histGraph.dispersion / histGraph.clusterSize
     for clusterGroup in labelOrder:
-        histGraph = diffGraph[diffGraph.clusterGroup == clusterGroup].weightedMean
-
+        graphData = histGraph[histGraph.clusterGroup == clusterGroup]
         # Plot histogram of mean error within cluster
         plt.clf()
-        plt.hist(x=histGraph.values, bins=np.arange(0, 1.5, 0.1),color="0.85", edgecolor="black")
+        plt.hist(x=graphData.error, bins=np.arange(0, 1.2, 0.1),color="0.85", edgecolor="black")
         plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
         # Align plots so they are comparable just by a brief look
-        plt.xlabel("Mean error for cluster")
+        plt.xlabel("Mean abs error within cluster")
         plt.ylabel("Number of clusters")
-        plt.title(f"Mean error in clusters \n Method {version} | Cluster size {clusterGroup}")
+        plt.ylim((0, 7))
+        plt.title(f"Mean absolute error distribution for clusters \n Method {version} | Cluster size {clusterGroup}")
         plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanErrorHistogram{version}Cluster{clusterGroup}.png")
-
-    # Create graphs for mean /variance in cluster
-    # plt.clf()
-    # plot = sns.barplot(y=varGraph.weightedMean, x=varGraph.index, color="white", edgecolor="black", linewidth=2)
-    # for i, bar in enumerate(plot.patches):
-    #     bar.set_hatch(**next(styles))
-    # plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
-    # plt.xlabel("Cluster size")
-    # plt.ylabel("Mean squared error")
-    # plt.ylim((0, 0.5)) # Make graphs comparable
-    # plt.title(f"Mean squared error by cluster size \nMethod {version}")
-    # plt.tight_layout()
-    # plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanSqError{version}.png")
+    
+    print("-"*20)
 
 ##########################################
 # Compare different methods to each other

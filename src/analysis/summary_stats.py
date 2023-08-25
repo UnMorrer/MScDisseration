@@ -67,6 +67,7 @@ for colname in ["destCountry", "descLanguage"]:
     value_counts = data[colname].value_counts()
     # Limit to at least 10 ads to reduce clutter.
     value_counts = value_counts[value_counts >= 10]
+    xlimit = 3000
 
     # Replace values with more readable ones for language
     if colname == "descLanguage":
@@ -80,6 +81,8 @@ for colname in ["destCountry", "descLanguage"]:
             "uk": "Ukrainian"
         }, inplace=True)
 
+        xlimit = 3000
+
     # Clear plot area
     plt.clf()
     # Create barplot
@@ -90,7 +93,7 @@ for colname in ["destCountry", "descLanguage"]:
     # Add thin horizontal grid lines
     plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Number of adverts")
-    plt.xlim(0, 3000)
+    plt.xlim(0, xlimit)
     plt.title(plotTitles[colname])
 
     # Prevent x label cut-off
@@ -154,7 +157,7 @@ for i, bar in enumerate(plot.patches):
 # Add thin horizontal grid lines
 plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
 plt.xlabel("Number of adverts")
-plt.xlim(0, 1500)
+plt.xlim(0, 1000)
 plt.title("Job description language | foreign jobs")
 
 # Prevent x label cut-off
@@ -195,10 +198,10 @@ for colname in categoricalIndicators:
     xlimit = 3000
     if colname == "industrySector": # Trim values in big graph
         value_counts = value_counts[value_counts >= 10]
-        xlimit = 1000
+        xlimit = 400
 
     if colname == "jobNature":
-        xlimit = 1250
+        xlimit = 1200
 
     # Clear plot area
     plt.clf()
@@ -342,4 +345,5 @@ accommodationProvided = foreignData[foreignData.accommodationProvided == "yes"].
 accommodationProvided.accommodationPaidByWorker.value_counts()
 accommodationProvided.deductionFromWages.value_counts()
 accommodationProvided.sharedAccommodation.value_counts()
+
 a = 1

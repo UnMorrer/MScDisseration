@@ -100,7 +100,7 @@ for version in range(1, 5, 1):
     plt.hist(x=size.values, log=True, color="0.85", bins=range(2,max(size.values)+1, 1), edgecolor="black")
     plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
     # Align plots so they are comparable just by a brief look
-    plt.xlim((1,55))
+    plt.xlim((1,50))
     plt.xlabel("Adverts in cluster")
     plt.ylabel("Number of clusters (log scale)")
     plt.title(f"Number of clusters and cluster size - Method {version}")
@@ -128,7 +128,7 @@ for version in range(1, 5, 1):
     plot = sns.barplot(y=diffGraph.weightedMean, x=diffGraph.clusterGroup, color="white", edgecolor="black", linewidth=2)#, yerr=[lowerError, upperError])
     for i, bar in enumerate(plot.patches):
         bar.set_hatch(**next(styles))
-    plt.grid(which='major', axis='x', linestyle='--', linewidth=0.5, color='gray')
+    plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
     plt.xlabel("Cluster size")
     plt.ylabel("Mean abs error per advert")
     plt.ylim((0, 1)) # Make graphs comparable
@@ -174,16 +174,17 @@ for version in range(1, 5, 1):
     histGraph = diff.merge(size, on="LSH label").rename(columns={"totalIndicators": "clusterSize"})
     histGraph["clusterGroup"] = histGraph.clusterSize.apply(cce.assign_label)
     histGraph["error"] = histGraph.dispersion / histGraph.clusterSize
+    print(f"Highest mean absolute error for cluster: {max(histGraph.error)}")
     for clusterGroup in labelOrder:
         graphData = histGraph[histGraph.clusterGroup == clusterGroup]
         # Plot histogram of mean error within cluster
         plt.clf()
-        plt.hist(x=graphData.error, bins=np.arange(0, 1.2, 0.1),color="0.85", edgecolor="black")
+        plt.hist(x=graphData.error, bins=np.arange(0, 2, 0.1),color="0.85", edgecolor="black")
         plt.grid(which='major', axis='y', linestyle='--', linewidth=0.5, color='gray')
         # Align plots so they are comparable just by a brief look
         plt.xlabel("Mean abs error within cluster")
         plt.ylabel("Number of clusters")
-        plt.ylim((0, 7))
+        plt.ylim((0, 10))
         plt.title(f"Mean absolute error distribution for clusters \n Method {version} | Cluster size {clusterGroup}")
         plt.savefig(f"/home/omarci/masters/MScDissertation/figures/clusters/meanErrorHistogram{version}Cluster{clusterGroup}.png")
     

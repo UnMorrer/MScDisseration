@@ -67,7 +67,7 @@ for colname in ["destCountry", "descLanguage"]:
     value_counts = data[colname].value_counts()
     # Limit to at least 10 ads to reduce clutter.
     value_counts = value_counts[value_counts >= 10]
-    xlimit = 3000
+    xlimit = 2500
 
     # Replace values with more readable ones for language
     if colname == "descLanguage":
